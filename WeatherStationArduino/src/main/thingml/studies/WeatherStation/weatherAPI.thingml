@@ -1,0 +1,13 @@
+import "../../datatypes.thingml"
+
+thing fragment RemoteMonitoringMsgs
+{
+    message temperature(temp : UInt16)
+    @code "10";
+    
+    message light(light : UInt16)
+    @code "11";    
+    
+    message changeDisplay()
+    @code "20";
+}
