@@ -1,5 +1,6 @@
 package org.thingml.samples.weatherstation;
 
+import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 
 /**
@@ -7,15 +8,27 @@ import java.text.DecimalFormat;
  */
 public class WeatherStationSimulator extends WeatherStation implements Runnable {
 
-    private static WeatherStationSimulator instance = new WeatherStationSimulator();
+    private static WeatherStationSimulator instance = new WeatherStationSimulator(new REST_RemoteControl_Client());
     static{
-        instance.addRemoteControlListener(new REST_RemoteControl_Client());
         new Thread(instance).start();
     }
     public static WeatherStationSimulator getInstance() { return instance; }
 
-    public WeatherStationSimulator() {
+    protected REST_RemoteControl_Client restClient;
+
+    public WeatherStationSimulator(REST_RemoteControl_Client restClient) {
+        addRemoteControlListener(restClient);
+        this.restClient = restClient;
+        WebSocket_UI ui = null;
+        try {
+            ui = new WebSocket_UI(8081, this);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        ui.start();
+        this.addUIListener(ui);
         df.setMaximumFractionDigits(2);
+
     }
 
     private float temperature = 25;
@@ -27,6 +40,18 @@ public class WeatherStationSimulator extends WeatherStation implements Runnable 
     public synchronized void RemoteControl_changeDisplay(){
         if (display.equals("Temperature")) display = "Light";
         else display = "Temperature";
+        UI_updateDisplay(getDisplayString());
+    }
+
+    public void  UI_changeDisplay() {
+        RemoteControl_changeDisplay();
+    }
+    public void  UI_setRestURI(String uri){
+        restClient.setTargetURI(uri);
+        UI_restURI(restClient.getTargetURI());
+    }
+    public void  UI_getRestURI(){
+        UI_restURI(restClient.getTargetURI());
     }
 
     private DecimalFormat df = new DecimalFormat();
@@ -61,13 +86,17 @@ public class WeatherStationSimulator extends WeatherStation implements Runnable 
         while (!stop) {
             try {
                 simulate_sensors();
-                System.out.println("Tick " + getDisplayString());
+                UI_updateDisplay(getDisplayString());
+                //System.out.println("Tick " + getDisplayString());
                 Thread.sleep(1000);
                 clk++;
                 if (clk%5 == 0) { // Every 5 seconds
-                    System.out.println("Send values =>");
+                    UI_putRestData();
                     RemoteControl_light(light);
+                    UI_putRestDataResponse(restClient.getLastResponse());
+                    UI_putRestData();
                     RemoteControl_temperature(temperature);
+                    UI_putRestDataResponse(restClient.getLastResponse());
                 }
                 if (clk==10) { // Every 10 seconds
                     RemoteControl_changeDisplay();

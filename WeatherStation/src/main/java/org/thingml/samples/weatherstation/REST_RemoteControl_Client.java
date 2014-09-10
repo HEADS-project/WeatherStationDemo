@@ -12,18 +12,41 @@ import javax.ws.rs.core.MediaType;
 public class REST_RemoteControl_Client implements WeatherStation_RemoteControl_Listener {
 
     private WebTarget target;
+    private String last_response;
+
+    public String getLastResponse() {
+        return last_response;
+    }
 
     public REST_RemoteControl_Client() {
+        setTargetURI(Main.TEST_URI);
+    }
+
+    public void setTargetURI(String uri) {
         Client c = ClientBuilder.newClient();
-        target = c.target(Main.M2M_URI);
+        target = c.target(uri);
+    }
+
+    public String getTargetURI() {
+        return target.getUri().toString();
     }
 
     public void RemoteControl_temperature(float temperature) {
 
-        target.path("temperature").request().put(Entity.entity("" + temperature, MediaType.TEXT_PLAIN_TYPE));
+        try {
+            last_response = target.path("temperature").request().put(Entity.entity("" + temperature, MediaType.TEXT_PLAIN_TYPE)).toString();
+        }
+        catch(Exception e) {
+            last_response = "Exception : " + e.getMessage();
+        }
     }
     public void RemoteControl_light(float light) {
 
-        target.path("light").request().put(Entity.entity("" + light, MediaType.TEXT_PLAIN_TYPE));
+        try {
+        last_response = target.path("light").request().put(Entity.entity("" + light, MediaType.TEXT_PLAIN_TYPE)).toString();
+        }
+        catch(Exception e) {
+            last_response = "Exception : " + e.getMessage();
+        }
     }
 }
