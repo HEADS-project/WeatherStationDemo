@@ -12,7 +12,7 @@ thing WeatherStationGUI includes RemoteMonitoringMsgs
     provided port gui
     {
         sends changeDisplay
-        receives updatedDisplay
+        receives temperature, light
     }  
 }
 
@@ -26,7 +26,7 @@ thing WeatherStation includes RemoteMonitoringMsgs
     
     required port gui {
         receives changeDisplay
-        sends updatedDisplay    
+        sends temperature, light    
     }
     
     provided port RemoteControlOut
@@ -50,13 +50,13 @@ thing WeatherStation includes RemoteMonitoringMsgs
         internal event t : RemoteControlIn?temperature
         action do
             print("Temperature is: " + t.temp)
-            gui!updatedDisplay()
+            gui!temperature(t.temp)
         end
         
         internal event l : RemoteControlIn?light
         action do
             print("Light is: " + l.light)
-            gui!updatedDisplay()
+            gui!light(l.light)
         end
         
         internal event gui?changeDisplay

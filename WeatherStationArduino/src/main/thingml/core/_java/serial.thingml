@@ -11,13 +11,6 @@ thing SerialJava includes IOByteArray
 @java_interface "org.thingml.comm.rxtx.SerialObserver"
 @thingml_maven_dep "org.thingml.utils"
 {
-    /*message ready();
-    message killed();
-    
-    provided port serial_lifecycle {
-        sends ready, killed    
-    }*/
-    
     readonly property serialPort : String = "COM4"
     property serial : JavaSerial 
         
@@ -25,21 +18,22 @@ thing SerialJava includes IOByteArray
     @override "true"
     do
         //DEBUG
-        /*'for(byte b :' & byte & ') {'
+        /*print("receiving from serial port...")
+        'for(byte b :' & byte & ') {'
         print("  serial has received: " + 'b')
         '}'*/
          
         IOStream!receive_bytes(byte)
+        
+        print("")
     end
     
     function initSerial() do 
         serial = 'new org.thingml.comm.rxtx.Serial4ThingML(' & serialPort & ', this)'  
-        //serial_lifecycle!ready()
     end
     
     function killSerial() do
         '' & serial & '.close();'
-        //serial_lifecycle!killed()
     end
         
 

@@ -10,7 +10,4 @@ thing fragment RemoteMonitoringMsgs
     
     message changeDisplay()
     @code "20";
-
-    message updatedDisplay()
-    @code "21";    
 }
