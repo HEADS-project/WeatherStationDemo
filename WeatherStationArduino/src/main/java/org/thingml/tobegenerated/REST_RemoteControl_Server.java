@@ -8,12 +8,6 @@ import javax.ws.rs.core.MediaType;
 @Path("/RemoteControl")
 public class REST_RemoteControl_Server {
 
-    WeatherStation ws;
-
-    public REST_RemoteControl_Server(WeatherStation ws) {
-        this.ws = ws;
-    }
-
 /*    @GET @Path("/display")
     @Produces(MediaType.TEXT_PLAIN)
     public String display() {
@@ -25,7 +19,7 @@ public class REST_RemoteControl_Server {
     @Produces(MediaType.TEXT_PLAIN)
    // @Consumes(MediaType.TEXT_PLAIN)
     public String changeDisplay() {
-        ws.changeDisplay_via_gui();
+        WeatherStation.getInstance().changeDisplay_via_gui();
         System.out.println("Got changeDisplay");
         return "OK";
     }
