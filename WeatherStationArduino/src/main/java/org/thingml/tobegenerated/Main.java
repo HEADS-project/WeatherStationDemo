@@ -12,6 +12,7 @@ import org.thingml.java.Connector;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.UnknownHostException;
 
 /**
  * Main class.
@@ -118,6 +119,25 @@ public class Main {
         final HttpServer server = startServer();
         System.out.println(String.format("Jersey app started with WADL available at "
                 + "%sapplication.wadl\nHit CTRL+C to stop it...", BASE_URI));
+
+        try {
+            final WebSocket_UI ui = new WebSocket_UI(8081, WeatherStation_JavaWeatherNode_app);
+            ui.start();
+            WeatherStation_JavaWeatherNode_app.registerOnGui(ui);
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                public void run() {
+                    try {
+                        ui.stop();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
