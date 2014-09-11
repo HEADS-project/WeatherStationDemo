@@ -13,26 +13,18 @@ import java.nio.ByteBuffer;
  */
 public class MQTT_RemoteControl_Client implements IWeatherStation_guiClient {
 
-    MqttClient mqtt;
+    MqttAsyncClient mqtt;
     WeatherStation weatherStation;
+    IMqttToken token;
 
     public MQTT_RemoteControl_Client(WeatherStation ws) {
         weatherStation = ws;
         try {
-
-
-            /*MqttAsyncClient mqttClient = new MqttAsyncClient("tcp://localhost:1883",
-                    MqttClient.generateClientId(), new MemoryPersistence());
-
-            mqttClient.setCallback(new MqttCallback() {*/
-
-
-
-        mqtt = new MqttClient("tcp://localhost:1883", "WeatherStation", new MemoryPersistence());
+        mqtt = new MqttAsyncClient("tcp://localhost:1883", "WeatherStation", new MemoryPersistence());
         MqttConnectOptions connOpts = new MqttConnectOptions();
         connOpts.setCleanSession(true);
         System.out.println("Connecting to broker");
-        mqtt.connect(connOpts);
+        token = mqtt.connect(connOpts);
         System.out.println("Connected");
                 mqtt.setCallback(new MqttCallback() {
                     @Override
@@ -43,6 +35,7 @@ public class MQTT_RemoteControl_Client implements IWeatherStation_guiClient {
                     @Override
                     public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
                         if (topic.equals("changeDisplay")) {
+                            System.out.println("changeDisplay received on MQTT topic");
                            weatherStation.changeDisplay_via_gui();
                         }
                     }
@@ -52,7 +45,8 @@ public class MQTT_RemoteControl_Client implements IWeatherStation_guiClient {
 
                     }
                 });
-        registerOnChangeDisplay();
+            token.waitForCompletion();
+            registerOnChangeDisplay();
         } catch (Exception e) {
             System.err.println("Cannot connect to MQTT Server. " + e.getLocalizedMessage());
         }
@@ -68,7 +62,7 @@ public class MQTT_RemoteControl_Client implements IWeatherStation_guiClient {
 
     public void registerOnChangeDisplay() {
         try {
-            mqtt.subscribe("changeDisplay");
+            mqtt.subscribe("changeDisplay",2);
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -103,5 +97,25 @@ public class MQTT_RemoteControl_Client implements IWeatherStation_guiClient {
         } catch (Exception e) {
             System.err.println("Cannot publish on MQTT topic. " + e.getLocalizedMessage());
         }
+    }
+
+    public void sendChangeDisplay() {//just a test, should be removed later on
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for(int i = 0; i < 50; i++) {
+                    try {
+                        System.out.println("Publishing changeDisplay");
+                        MqttMessage message = new MqttMessage();
+                        message.setQos(2);
+                        mqtt.publish("changeDisplay", message);
+                        System.out.println("Message published");
+                        Thread.currentThread().sleep(1000);
+                    } catch (Exception e) {
+                        System.err.println("Cannot publish on MQTT topic. " + e.getLocalizedMessage());
+                    }
+                }
+            }
+        }).start();
     }
 }

@@ -76,7 +76,7 @@ public class WeatherStation extends Component
 		receive(changeDisplayType.instantiate(gui_port), gui_port);
 	}
 
-	private void sendTemperature_via_gui(
+	private synchronized void sendTemperature_via_gui(
 			short RemoteMonitoringMsgs_temperature_temp__var) {
 		// ThingML send
 		send(temperatureType.instantiate(gui_port,
@@ -87,7 +87,8 @@ public class WeatherStation extends Component
 		}
 	}
 
-	private void sendLight_via_gui(short RemoteMonitoringMsgs_light_light__var) {
+	private synchronized void sendLight_via_gui(
+			short RemoteMonitoringMsgs_light_light__var) {
 		// ThingML send
 		send(lightType.instantiate(gui_port,
 				RemoteMonitoringMsgs_light_light__var), gui_port);
