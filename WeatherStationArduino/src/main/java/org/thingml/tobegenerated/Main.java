@@ -1,5 +1,6 @@
 package org.thingml.tobegenerated;
 
+import org.dna.mqtt.moquette.server.Server;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -20,8 +21,8 @@ import java.net.UnknownHostException;
  */
 public class Main {
     // Base URI the Grizzly HTTP server will listen on
-    public static final String BASE_URI = "http://localhost:8080/WeatherStation/";
-    public static final String TEST_URI = "http://localhost:8080/WeatherStation/M2MMock/";
+    public static final String BASE_URI = "http://localhost:8090/WeatherStation/";
+    public static final String TEST_URI = "http://localhost:8090/WeatherStation/M2MMock/";
 
     /**
      * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
@@ -138,6 +139,25 @@ public class Main {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
+
+        final Server mqttServer = new Server(); //it seems moquette starts something on 8080...
+        mqttServer.startServer();
+        System.out.println("MQTT Server started");
+        //Bind  a shutdown hook
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                mqttServer.stopServer();
+            }
+        });
+
+        final MQTT_RemoteControl_Client mqqtClient = new MQTT_RemoteControl_Client(WeatherStation_JavaWeatherNode_app);
+        WeatherStation_JavaWeatherNode_app.registerOnGui(mqqtClient);
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                mqqtClient.stop();
+            }
+        });
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
