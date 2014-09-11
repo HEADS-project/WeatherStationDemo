@@ -7,6 +7,8 @@ import org.thingml.generated.api.IWeatherStation_guiClient;
 
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by bmori on 11.09.2014.
@@ -16,6 +18,7 @@ public class MQTT_RemoteControl_Client implements IWeatherStation_guiClient {
     MqttAsyncClient mqtt;
     WeatherStation weatherStation;
     IMqttToken token;
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
     public MQTT_RemoteControl_Client(WeatherStation ws) {
         weatherStation = ws;
@@ -62,10 +65,23 @@ public class MQTT_RemoteControl_Client implements IWeatherStation_guiClient {
 
     public void registerOnChangeDisplay() {
         try {
-            mqtt.subscribe("HEADS/WeatherStation/changeDisplay",2);
+            mqtt.subscribe("HEADS/WeatherStation/changeDisplay", 2);
         } catch (MqttException e) {
             e.printStackTrace();
         }
+    }
+
+    private byte[] formatJSON(String deviceId, String type, String value) {
+        final Date date = new Date();
+        final StringBuilder builder = new StringBuilder();
+        builder.append("{");
+        builder.append("\"deviceId\":\"" + deviceId + "\",");
+        builder.append("\"observationTime\":\"" + dateFormat.format(date) + "\",");
+        builder.append("\"observations\":[");
+        builder.append("{\"" + type + "\":\"" + value + "\"}");
+        builder.append("]}");
+        System.out.println(builder.toString());
+        return builder.toString().getBytes();
     }
 
     @Override
@@ -77,7 +93,7 @@ public class MQTT_RemoteControl_Client implements IWeatherStation_guiClient {
             MqttMessage message = new MqttMessage(bb.array());
             message.setQos(2);
             mqtt.publish("HEADS/WeatherStation/temperature", message);
-            System.out.println("Message published");
+            System.out.println("Message published:\n" + formatJSON("WeatherStation", "temperature", String.valueOf(RemoteMonitoringMsgs_temperature_temp__var)));
         } catch (Exception e) {
             System.err.println("Cannot publish on MQTT topic. " + e.getLocalizedMessage());
         }
@@ -94,6 +110,7 @@ public class MQTT_RemoteControl_Client implements IWeatherStation_guiClient {
             message.setQos(2);
             mqtt.publish("HEADS/WeatherStation/light", message);
             System.out.println("Message published");
+            System.out.println("Message published:\n" + formatJSON("WeatherStation", "temperature", String.valueOf(RemoteMonitoringMsgs_light_light__var)));
         } catch (Exception e) {
             System.err.println("Cannot publish on MQTT topic. " + e.getLocalizedMessage());
         }
