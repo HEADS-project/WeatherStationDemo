@@ -15,10 +15,7 @@ import org.thingml.generated.messages.*;
 import org.thingml.tobegenerated.REST_RemoteControl_Client;
 
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Definition for type : WeatherStation
@@ -36,28 +33,30 @@ public class WeatherStation extends Component
 		return instance;
 	}
 
-	private List<IWeatherStation_guiClient> gui_clients = new LinkedList<IWeatherStation_guiClient>();
-	public void registerOnGui(IWeatherStation_guiClient client) {
+	private Collection<IWeatherStation_guiClient> gui_clients = Collections
+			.synchronizedCollection(new LinkedList<IWeatherStation_guiClient>());
+	public synchronized void registerOnGui(IWeatherStation_guiClient client) {
 		gui_clients.add(client);
 	}
 
-	public void unregisterFromGui(IWeatherStation_guiClient client) {
+	public synchronized void unregisterFromGui(IWeatherStation_guiClient client) {
 		gui_clients.remove(client);
 	}
 
-	private List<IWeatherStation_RemoteControlOutClient> RemoteControlOut_clients = new LinkedList<IWeatherStation_RemoteControlOutClient>();
-	public void registerOnRemoteControlOut(
+	private Collection<IWeatherStation_RemoteControlOutClient> RemoteControlOut_clients = Collections
+			.synchronizedCollection(new LinkedList<IWeatherStation_RemoteControlOutClient>());
+	public synchronized void registerOnRemoteControlOut(
 			IWeatherStation_RemoteControlOutClient client) {
 		RemoteControlOut_clients.add(client);
 	}
 
-	public void unregisterFromRemoteControlOut(
+	public synchronized void unregisterFromRemoteControlOut(
 			IWeatherStation_RemoteControlOutClient client) {
 		RemoteControlOut_clients.remove(client);
 	}
 
 	@Override
-	public void temperature_via_RemoteControlIn(
+	public synchronized void temperature_via_RemoteControlIn(
 			short RemoteMonitoringMsgs_temperature_temp__var) {
 		receive(temperatureType.instantiate(RemoteControlIn_port,
 				RemoteMonitoringMsgs_temperature_temp__var),
@@ -65,14 +64,14 @@ public class WeatherStation extends Component
 	}
 
 	@Override
-	public void light_via_RemoteControlIn(
+	public synchronized void light_via_RemoteControlIn(
 			short RemoteMonitoringMsgs_light_light__var) {
 		receive(lightType.instantiate(RemoteControlIn_port,
 				RemoteMonitoringMsgs_light_light__var), RemoteControlIn_port);
 	}
 
 	@Override
-	public void changeDisplay_via_gui() {
+	public synchronized void changeDisplay_via_gui() {
 		receive(changeDisplayType.instantiate(gui_port), gui_port);
 	}
 
@@ -85,6 +84,7 @@ public class WeatherStation extends Component
 		for (IWeatherStation_guiClient client : gui_clients) {
 			client.temperature_from_gui(RemoteMonitoringMsgs_temperature_temp__var);
 		}
+
 	}
 
 	private synchronized void sendLight_via_gui(
@@ -98,7 +98,7 @@ public class WeatherStation extends Component
 		}
 	}
 
-	private void sendChangeDisplay_via_RemoteControlOut() {
+	private synchronized void sendChangeDisplay_via_RemoteControlOut() {
 		// ThingML send
 		send(changeDisplayType.instantiate(RemoteControlOut_port),
 				RemoteControlOut_port);

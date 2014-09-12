@@ -153,7 +153,7 @@ public class Main {
 
         final MQTT_RemoteControl_Client mqqtClient = new MQTT_RemoteControl_Client(WeatherStation_JavaWeatherNode_app);
         WeatherStation_JavaWeatherNode_app.registerOnGui(mqqtClient);
-        mqqtClient.sendChangeDisplay();
+        //mqqtClient.sendChangeDisplay();
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 mqqtClient.stop();
