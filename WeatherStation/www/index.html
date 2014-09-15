@@ -29,7 +29,7 @@
                         <label for="text2">REST URL</label>
                         <input type="text" id="text2" />
                     </div>
-                    <a data-role="button">Set REST URL</a>
+                    <a data-role="button" onclick="setREST_URI();">Set REST URL</a>
                 </div>
                 <div data-role="collapsible">
                     <h1>Log</h1>
@@ -37,7 +37,7 @@
                 </div>
             </div>
             <div data-role="footer">
-                <h1>To be generated from ThingML</h1>
+                <h1>To be generated from ThingML :-)</h1>
             </div>
         </div>
 		
@@ -51,7 +51,8 @@
 var ws_host = "sintef1.heads-project.eu/WeatherStation/UI";
 var ws_port = "80";
 
-
+ var LBMSock;
+ 
 /**********************************************************************
  * Callbacks
  **********************************************************************/
@@ -63,6 +64,10 @@ $.ajax({
     data: 'changeDisplay', // or $('#myform').serializeArray()
     success: function() { alert('PUT completed'); }
 });
+} 
+
+function setREST_URI() {
+LBMSock.send("setRestURI:" + document.getElementById('text2').value);
 } 
  
  
@@ -77,12 +82,14 @@ function log_to_console(log) {
  * Initialization code and web socket communication
  **********************************************************************/
 
+
+ 
 window.onload = function () {
-    var LBMSock = new ReconnectingWebSocket("ws://" + ws_host + ":" + ws_port);
+     LBMSock = new ReconnectingWebSocket("ws://" + ws_host + ":" + ws_port);
 
     LBMSock.onopen = function () {
         // Web Socket is connected, send data using send()
-        //LBMSock.send("Hello!");
+        LBMSock.send("getRestURI");
     };
     LBMSock.onmessage = function (evt) {
 
@@ -91,10 +98,20 @@ window.onload = function () {
 		var cmd = split[0].trim();
         var arg = evt.data.substr(evt.data.indexOf(":")+1)
 		
-		log_to_console("CMD: " + cmd + " ARG: " + arg)
-		
 		if (cmd == "updateDisplay") {
 			document.getElementById('text1').value = arg;
+		}
+		else if (cmd == "restURI") {
+			document.getElementById('text2').value = arg;
+		}
+		else if (cmd == "putRestData") {
+			log_to_console("Sending PUT Request...");
+		}
+		else if (cmd == "putRestDataResponse") {
+			log_to_console("RESPONSE: " + arg);
+		}
+		else {
+			log_to_console("CMD: " + cmd + " ARG: " + arg)
 		}
 		
     };
