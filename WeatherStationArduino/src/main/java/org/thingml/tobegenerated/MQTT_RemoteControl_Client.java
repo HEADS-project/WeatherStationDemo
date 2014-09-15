@@ -120,17 +120,14 @@ public class MQTT_RemoteControl_Client implements IWeatherStation_guiClient {
     @Override
     public void temperature_from_gui(short RemoteMonitoringMsgs_temperature_temp__var) {
         try {
-            ByteBuffer bb = ByteBuffer.allocate(2);
-            bb.putShort(RemoteMonitoringMsgs_temperature_temp__var);
             System.out.println("Publishing temperature: " + RemoteMonitoringMsgs_temperature_temp__var);
-            MqttMessage message = new MqttMessage(bb.array());
+            MqttMessage message = new MqttMessage(formatJSON("device.data.temp", String.valueOf(RemoteMonitoringMsgs_temperature_temp__var)));
             message.setQos(2);
             mqtt.publish(tempTopic, message);
             System.out.println("Message published:\n" + formatJSON("device.data.temp", String.valueOf(RemoteMonitoringMsgs_temperature_temp__var)));
         } catch (Exception e) {
             System.err.println("Cannot publish on MQTT topic. " + e.getLocalizedMessage());
         }
-
     }
 
     @Override
