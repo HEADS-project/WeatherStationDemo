@@ -18,10 +18,13 @@ thing SerialJava includes IOByteArray
     @override "true"
     do
         //DEBUG
-        /*print("receiving from serial port...")
-        'for(byte b :' & byte & ') {'
-        print("  serial has received: " + 'b')
-        '}'*/
+        print("receiving from serial port...")
+        
+        'System.out.print("[");
+        for(byte b :' & byte & ') {
+            System.out.print("- " + b + " -");
+        }
+        System.out.println("]");'
          
         IOStream!receive_bytes(byte)
         
