@@ -25,13 +25,13 @@ public class WeatherStation extends Component
 			IWeatherStation_RemoteControlIn,
 			IWeatherStation_gui {
 
-	private REST_RemoteControl_Client restClient;
-	public static final WeatherStation instance = new WeatherStation(
-			new REST_RemoteControl_Client());
-
-	public static WeatherStation getInstance() {
-		return instance;
-	}
+	/*
+	 * private REST_RemoteControl_Client restClient; public static final
+	 * WeatherStation instance = new WeatherStation( new
+	 * REST_RemoteControl_Client());
+	 * 
+	 * public static WeatherStation getInstance() { return instance; }
+	 */
 
 	private Collection<IWeatherStation_guiClient> gui_clients = Collections
 			.synchronizedCollection(new LinkedList<IWeatherStation_guiClient>());
@@ -118,11 +118,11 @@ public class WeatherStation extends Component
 	private final LightMessageType lightType = new LightMessageType();
 	private final ChangeDisplayMessageType changeDisplayType = new ChangeDisplayMessageType();
 	// Empty Constructor
-	public WeatherStation(REST_RemoteControl_Client restClient) {
+	public WeatherStation() {
 		super(3);
 
-		registerOnGui(restClient);
-		this.restClient = restClient;
+		// registerOnGui(restClient);
+		// this.restClient = restClient;
 		// WebSocket_UI ui = null;
 		/*
 		 * try { ui = new WebSocket_UI(8081, this); } catch

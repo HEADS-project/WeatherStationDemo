@@ -2,6 +2,7 @@ package org.thingml.tobegenerated;
 
 import org.dna.mqtt.moquette.server.Server;
 import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.grizzly.http.server.NetworkListener;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.thingml.generated.MessageDeserializer;
@@ -25,20 +26,6 @@ public class Main {
     public static final String TEST_URI = "http://localhost:8090/WeatherStation/M2MMock/";
 
     /**
-     * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
-     * @return Grizzly HTTP server.
-     */
-    public static HttpServer startServer() {
-        // create a resource config that scans for JAX-RS resources and providers
-        // in org.thingml package
-        final ResourceConfig rc = new ResourceConfig().packages("org.thingml.tobegenerated");
-
-        // create and start a new instance of grizzly http server
-        // exposing the Jersey application at BASE_URI
-        return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
-    }
-
-    /**
      * Main method.
      * @param args
      * @throws java.io.IOException
@@ -49,7 +36,7 @@ public class Main {
 
         //ThingML conf
         // Things
-        final WeatherStation WeatherStation_JavaWeatherNode_app = (WeatherStation) WeatherStation.getInstance().buildBehavior();     //hacked
+        final WeatherStation WeatherStation_JavaWeatherNode_app = (WeatherStation) new WeatherStation().buildBehavior();     //hacked
         final SerialJava SerialJava_JavaWeatherNode_serial = (SerialJava) new SerialJava(
                 "JavaWeatherNode_serial: SerialJava", (String) "COM13",
                 (org.thingml.comm.rxtx.Serial4ThingML) null).buildBehavior();
@@ -117,9 +104,23 @@ public class Main {
         //end ThingML conf
 
 
-        final HttpServer server = startServer();
+        //final HttpServer server = startServer();
+        // create a resource config that scans for JAX-RS resources and providers
+        // in org.thingml package
+        final ResourceConfig rc = new ResourceConfig();//.packages("org.thingml.tobegenerated");
+        rc.register(new REST_RemoteControl_Server(WeatherStation_JavaWeatherNode_app));
+        rc.register(new REST_M2M_Mock());
+
+        // create and start a new instance of grizzly http server
+        // exposing the Jersey application at BASE_URI
+        final HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
+
         System.out.println(String.format("Jersey app started with WADL available at "
                 + "%sapplication.wadl\nHit CTRL+C to stop it...", BASE_URI));
+
+        REST_RemoteControl_Client httpclient = new REST_RemoteControl_Client();
+        WeatherStation_JavaWeatherNode_app.registerOnGui(httpclient);
+
 
         try {
             final WebSocket_UI ui = new WebSocket_UI(8081, WeatherStation_JavaWeatherNode_app);

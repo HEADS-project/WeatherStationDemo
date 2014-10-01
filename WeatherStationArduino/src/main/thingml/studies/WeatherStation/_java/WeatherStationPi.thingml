@@ -24,7 +24,7 @@ thing WeatherStation includes RemoteMonitoringMsgs
         receives temperature, light
     }
     
-    required port gui {
+    required port gui @public "true" {
         receives changeDisplay
         sends temperature, light    
     }

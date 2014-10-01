@@ -8,18 +8,17 @@ import javax.ws.rs.core.MediaType;
 @Path("/RemoteControl")
 public class REST_RemoteControl_Server {
 
-/*    @GET @Path("/display")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String display() {
-        return WeatherStationSimulator.getInstance().getDisplayString();
+    private WeatherStation weatherStation;
+
+    public REST_RemoteControl_Server(WeatherStation thing) {
+        weatherStation = thing;
     }
-*/
 
     @PUT @Path("/changeDisplay")
     @Produces(MediaType.TEXT_PLAIN)
    // @Consumes(MediaType.TEXT_PLAIN)
     public String changeDisplay() {
-        WeatherStation.getInstance().changeDisplay_via_gui();
+        weatherStation.changeDisplay_via_gui();
         System.out.println("Got changeDisplay");
         return "OK";
     }
