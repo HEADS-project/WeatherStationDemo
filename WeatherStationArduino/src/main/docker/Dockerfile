@@ -13,6 +13,7 @@ run apt-get install -y git-core maven
 # Clone and build project
 run git clone https://github.com/HEADS-project/WeatherStationDemo.git
 run cd WeatherStationDemo/WeatherStationArduino
+workdir WeatherStationDemo/WeatherStationArduino
 run mvn clean install
 
 # Expose the port (for MQTT, WS and HTTP)
@@ -20,7 +21,6 @@ expose 8080
 expose 8090
 expose 9000
 
-workdir WeatherStationDemo/WeatherStationArduino
 
 # Run Weather station
 cmd java -jar target/JavaWeatherNode-1.0-SNAPSHOT-jar-with-dependencies.jar
