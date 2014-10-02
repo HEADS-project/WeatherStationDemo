@@ -7,18 +7,8 @@
 
 package org.thingml.generated;
 
-import org.thingml.java.*;
-import org.thingml.java.ext.*;
-
-import org.thingml.generated.api.*;
-import org.thingml.generated.messages.*;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Collections;
-import java.util.List;
-
-import org.thingml.generated.gui.*;
+import org.thingml.generated.gui.WeatherStationGUIMock;
+import org.thingml.java.Connector;
 public class Main {
 	public static void main(String args[]) {
 		// Things

@@ -1,3 +1,6 @@
+WeatherStationArduino/src/main/resources
+WeatherStationArduino/*.dll
+WeatherStationArduino/*.so
 target/
 pom.xml.tag
 pom.xml.releaseBackup

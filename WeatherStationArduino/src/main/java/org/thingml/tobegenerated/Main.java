@@ -2,7 +2,6 @@ package org.thingml.tobegenerated;
 
 import org.dna.mqtt.moquette.server.Server;
 import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.grizzly.http.server.NetworkListener;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.thingml.generated.MessageDeserializer;

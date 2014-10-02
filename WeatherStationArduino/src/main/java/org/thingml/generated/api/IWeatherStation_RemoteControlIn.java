@@ -1,7 +1,5 @@
 package org.thingml.generated.api;
 
-import org.thingml.generated.api.*;
-
 public interface IWeatherStation_RemoteControlIn {
 	void temperature_via_RemoteControlIn(
 			short RemoteMonitoringMsgs_temperature_temp__var);

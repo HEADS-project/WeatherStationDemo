@@ -7,14 +7,17 @@
 
 package org.thingml.generated;
 
+import org.thingml.generated.api.IWeatherStation_RemoteControlIn;
+import org.thingml.generated.api.IWeatherStation_RemoteControlOutClient;
+import org.thingml.generated.api.IWeatherStation_gui;
+import org.thingml.generated.api.IWeatherStation_guiClient;
+import org.thingml.generated.messages.ChangeDisplayMessageType;
+import org.thingml.generated.messages.LightMessageType;
+import org.thingml.generated.messages.TemperatureMessageType;
 import org.thingml.java.*;
-import org.thingml.java.ext.*;
+import org.thingml.java.ext.Event;
+import org.thingml.java.ext.EventType;
 
-import org.thingml.generated.api.*;
-import org.thingml.generated.messages.*;
-import org.thingml.tobegenerated.REST_RemoteControl_Client;
-
-import java.net.UnknownHostException;
 import java.util.*;
 
 /**

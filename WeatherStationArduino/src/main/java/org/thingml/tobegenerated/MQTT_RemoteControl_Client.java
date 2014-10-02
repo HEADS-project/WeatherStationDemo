@@ -5,11 +5,8 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.thingml.generated.WeatherStation;
 import org.thingml.generated.api.IWeatherStation_guiClient;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;

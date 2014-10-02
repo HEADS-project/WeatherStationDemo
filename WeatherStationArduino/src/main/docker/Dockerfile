@@ -23,4 +23,4 @@ expose 9000
 workdir /WeatherStation/WeatherStationArduino
 
 # Run Weather station
-cmd java -jar target/JavaWeatherNode-1.0-SNAPSHOT.jar
+cmd java -jar target/JavaWeatherNode-1.0-SNAPSHOT-jar-with-dependencies.jar

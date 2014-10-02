@@ -1,6 +1,5 @@
 package org.thingml.tobegenerated;
 
-import org.thingml.generated.api.IWeatherStation_RemoteControlIn;
 import org.thingml.generated.api.IWeatherStation_guiClient;
 
 import javax.ws.rs.client.Client;
