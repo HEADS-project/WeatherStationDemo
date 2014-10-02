@@ -11,6 +11,7 @@ import org.thingml.generated.WeatherStation;
 import org.thingml.generated.gui.WeatherStationGUIMock;
 import org.thingml.java.Connector;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.UnknownHostException;
@@ -31,7 +32,7 @@ public class Main {
      */
     public static void main(String[] args) throws IOException {
 
-
+        final boolean isHeadless = GraphicsEnvironment.getLocalGraphicsEnvironment().isHeadless();
 
         //ThingML conf
         // Things
@@ -53,19 +54,30 @@ public class Main {
                 (byte) 0x7D, (int) 3, (int) 4, (int) 5,
                 JavaWeatherNode_deserializer_buffer_array, (int) 0)
                 .buildBehavior();
-        final WeatherStationGUIMock WeatherStationGUI_JavaWeatherNode_gui = new WeatherStationGUIMock(
-                "WeatherStationGUI_JavaWeatherNode_gui");
+        if (!isHeadless) {
+            final WeatherStationGUIMock WeatherStationGUI_JavaWeatherNode_gui = new WeatherStationGUIMock(
+                    "WeatherStationGUI_JavaWeatherNode_gui");
+            		/* final Connector c_1026239926 = */new Connector(
+                    WeatherStation_JavaWeatherNode_app.getGui_port(),
+                    WeatherStationGUI_JavaWeatherNode_gui.getGui_port(),
+                    WeatherStation_JavaWeatherNode_app,
+                    WeatherStationGUI_JavaWeatherNode_gui);
+                    WeatherStationGUI_JavaWeatherNode_gui.start();
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                public void run() {
+                    System.out.println("Terminating GUI...");
+                    WeatherStationGUI_JavaWeatherNode_gui.stop();
+                    System.out.println("GUI terminated. RIP!");
+                }
+            });
+
+        }
         // Connectors
 		/* final Connector c_206313561 = */new Connector(
                 MessageSerializer_JavaWeatherNode_serializer.getOut_port(),
                 SerialJava_JavaWeatherNode_serial.getIOStream_port(),
                 MessageSerializer_JavaWeatherNode_serializer,
                 SerialJava_JavaWeatherNode_serial);
-		/* final Connector c_1026239926 = */new Connector(
-                WeatherStation_JavaWeatherNode_app.getGui_port(),
-                WeatherStationGUI_JavaWeatherNode_gui.getGui_port(),
-                WeatherStation_JavaWeatherNode_app,
-                WeatherStationGUI_JavaWeatherNode_gui);
 		/* final Connector c_1473413469 = */new Connector(
                 MessageSerializer_JavaWeatherNode_serializer
                         .getRemoteControl_port(),
@@ -86,7 +98,6 @@ public class Main {
         // Starting Things
         SerialJava_JavaWeatherNode_serial.start();
         WeatherStation_JavaWeatherNode_app.start();
-        WeatherStationGUI_JavaWeatherNode_gui.start();
         MessageSerializer_JavaWeatherNode_serializer.start();
         MessageDeserializer_JavaWeatherNode_deserializer.start();
         Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -95,7 +106,6 @@ public class Main {
                 MessageSerializer_JavaWeatherNode_serializer.stop();
                 SerialJava_JavaWeatherNode_serial.stop();
                 WeatherStation_JavaWeatherNode_app.stop();
-                WeatherStationGUI_JavaWeatherNode_gui.stop();
                 MessageDeserializer_JavaWeatherNode_deserializer.stop();
                 System.out.println("ThingML app terminated. RIP!");
             }
