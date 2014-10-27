@@ -1,0 +1,44 @@
+import "../serializer.thingml"
+
+//Defines the way the datatypes of the ThingML framework are serialized in Scala
+//TODO: do it for all the remaining datatypes
+thing fragment SerializerJS  includes ArraySerializer
+{   
+    //Integer    
+    function serializeInteger(d : Integer)
+    do
+        '
+        var long = ' & d & ';
+        for ( var index = 0; index < 2; index ++ ) {
+            var byte = long & 0xff;
+            ' & storeByte('byte') & '
+            long = (long - byte) / 256 ;
+        }
+        '
+    end
+    
+    //UInt16
+    function serializeUInt16(d : UInt16)
+    do
+        serializeInteger(d)
+    end  
+}
+
+thing fragment DeserializerJS includes ArrayDeserializer {
+    //Integer        
+    function deserializeInteger() : Integer
+    do
+        '
+        var value = 0;
+        for ( var i = 1; i >= 0; i--) {
+            value = (value * 256) + ' & readByte() & ';
+        }
+        return value;        
+        '
+    end  
+    
+    function deserializeUInt16() : UInt16
+    do
+        return deserializeInteger()
+    end          
+}

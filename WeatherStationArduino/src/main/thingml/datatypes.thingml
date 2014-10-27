@@ -99,6 +99,7 @@ datatype String
 	@c_type "char *"
 	@c_byte_size "*"
 	@java_type "String"
+    @js_type "String"
     @SenML_type "String";
 	
 enumeration DigitalState 
