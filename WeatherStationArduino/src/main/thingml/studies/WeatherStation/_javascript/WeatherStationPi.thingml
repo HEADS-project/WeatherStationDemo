@@ -2,6 +2,7 @@ import "../../../core/serializer.thingml"
 import "../../../core/comm.thingml"
 import "../../../core/_javascript/serializer.thingml"
 import "../../../core/_javascript/serial.thingml"
+import "../../../core/_javascript/timer.thingml"
 
 import "../weatherAPI.thingml"
 
@@ -16,7 +17,7 @@ thing WeatherStationGUI includes RemoteMonitoringMsgs
     }  
 }
 
-thing WeatherStation includes RemoteMonitoringMsgs
+thing WeatherStation includes RemoteMonitoringMsgs, TimerClient
 {    
     
     provided port RemoteControlIn 
@@ -44,8 +45,15 @@ thing WeatherStation includes RemoteMonitoringMsgs
        state Process {
            
          on entry do
-           print("Weather station ready indeed")
+           timer!timer_start(3000)
          end
+         
+        transition -> Process
+        event timer?timer_timeout
+        action do
+            print("Changing Display on Arduino")
+            RemoteControlOut!changeDisplay()
+        end
            
         internal event t : RemoteControlIn?temperature
         action do
@@ -173,16 +181,18 @@ configuration JSWeatherNode
 @remote "app::.*::RemoteControl::.*"
 {
     instance app : WeatherStation
+    instance timer : TimerJS
     //instance gui : WeatherStationGUI
+    connector app.timer => timer.timer
         
     instance deserializer : MessageDeserializer
-    //instance serializer : MessageSerializer
+    instance serializer : MessageSerializer
     instance serial : SerialJS
         set serial.serialPort = "COM13"
     
     connector deserializer.in => serial.read
-    //connector deserializer.RemoteControl => app.RemoteControlIn
-    //connector serializer.out => serial.write
-    //connector serializer.RemoteControl => app.RemoteControlOut
+    connector deserializer.RemoteControl => app.RemoteControlIn
+    connector serializer.out => serial.write
+    connector serializer.RemoteControl => app.RemoteControlOut
     //connector app.gui => gui.gui
 }
