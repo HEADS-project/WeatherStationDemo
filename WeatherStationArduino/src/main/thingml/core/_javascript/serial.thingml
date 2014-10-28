@@ -41,9 +41,9 @@ thing SerialJS includes IOByteArray
                 index = index + 1
             end 
             if (byte == '0x13' and not(buffer[index-1] == '0x7D')) do //stop byte
-               print("forward buffer! [" + buffer + "]")
+               //print("forward buffer! [" + buffer + "]")
                read!receive_bytes(buffer)
-               print("buffer forwarded!")
+               //print("buffer forwarded!")
                index = 0
                var i : Integer = 0
                while (i < 18) do

@@ -183,6 +183,7 @@ thing fragment ArrayDeserializer includes PacketManager, InputByteArrayMsgs{
                     continue = not(next == STOP_BYTE and not(current == ESCAPE_BYTE))
                 end
                 storeByte(current)
+                //print("DEBUG: forward")
                 forward()
             end
         end
