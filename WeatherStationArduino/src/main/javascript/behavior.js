@@ -721,7 +721,7 @@ SerialJS_serialP__var.write(json.b, function(err, results) {
 }
 //Public API for lifecycle management
 SerialJS.prototype._stop = function() {
-killSerial();
+this.killSerial();
 console.log("Serial port killed, RIP!");
 }
 
@@ -964,16 +964,25 @@ wsServer.on('request', function(request) {
       return;
     }
 
-    var connection = request.accept('thingml-protocol', request.origin);
+	
+    var connection = request.accept(null, request.origin);
+	clients.push(connection);
     console.log((new Date()) + ' Connection accepted.');
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
             console.log('Received Message: ' + message.utf8Data);
-            connection.sendUTF(message.utf8Data);
+			var arrayLength = clients.length;
+			for (var i = 0; i < arrayLength; i++) {
+				clients[i].sendUTF(message.utf8Data);
+			}            
         }
     });
     connection.on('close', function(reasonCode, description) {
         console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+		var index = clients.indexOf(connection);
+		if (index > -1) {
+			clients.splice(index, 1);
+		}
     });
 });
 
@@ -1007,10 +1016,11 @@ wsServer.on('request', function(request) {
 				console.log("Received: '" + message.utf8Data + "'");
 			}
 		});
-		setInterval(function() {clientConnection.sendUTF('{"message":"changeDisplay","port":"gui"}');}, 3000);	
+		/*var timer = setInterval(function() {clientConnection.sendUTF('{"message":"changeDisplay","port":"gui"}');}, 3000);	
+		timer.unref();//Do not wait for the timer if it is the only thing left (typically when stopping the app)*/
 	});    
 
-	client.connect('ws://localhost:' + port + '/', 'thingml-protocol');
+	client.connect('ws://localhost:' + port + '/', null);
 
 	this.onMessage = function(message) {
 		console.log(message);
@@ -1020,7 +1030,17 @@ wsServer.on('request', function(request) {
 			clientConnection.sendUTF(JSON.stringify(json));
 		}
 	}	
+	
+	this._stop = function() {
+		clientConnection.close();
+		wsServer.shutDown();
+		server.close();
+	}
 }
 
 var wsGuiListener = new WebSocketGuiListener(JSWeatherNode_app, 8080);
 JSWeatherNode_app.getGuiListeners().push(wsGuiListener.onMessage);
+
+process.on('SIGINT', function() {
+wsGuiListener._stop();
+});
