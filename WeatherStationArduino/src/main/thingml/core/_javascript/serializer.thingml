@@ -8,11 +8,11 @@ thing fragment SerializerJS  includes ArraySerializer
     function serializeInteger(d : Integer)
     do
         '
-        var long = ' & d & ';
+        var l = ' & d & ';
         for ( var index = 0; index < 2; index ++ ) {
-            var byte = long & 0xff;
-            ' & storeByte('byte') & '
-            long = (long - byte) / 256 ;
+            var b = l & 0xff;
+            ' & storeByte('b') & '
+            l = (l - b) / 256 ;
         }
         '
     end
