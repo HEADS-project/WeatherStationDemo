@@ -55,24 +55,13 @@ this.client._receive(JSON.stringify(json));
 
 
 /**
- * Definition for type : MessageSerializer
+ * Definition for type : TimerJS
  **/
-function MessageSerializer(PacketManager_lengthInteger__var, PacketManager_lengthString__var, PacketManager_lengthUInt16__var, PacketManager_MAX_PACKET_SIZE__var, PacketManager_START_BYTE__var, PacketManager_STOP_BYTE__var, PacketManager_ESCAPE_BYTE__var, PacketManager_CODE_POSITION__var, PacketManager_LENGTH_POSITION__var, PacketManager_DATA_POSITION__var, PacketManager_buffer__var, PacketManager_index__var) {
+function TimerJS() {
 
 this.ready = false;
 //Attributes
-this.PacketManager_lengthInteger__var =PacketManager_lengthInteger__var;
-this.PacketManager_lengthString__var =PacketManager_lengthString__var;
-this.PacketManager_lengthUInt16__var =PacketManager_lengthUInt16__var;
-this.PacketManager_MAX_PACKET_SIZE__var =PacketManager_MAX_PACKET_SIZE__var;
-this.PacketManager_START_BYTE__var =PacketManager_START_BYTE__var;
-this.PacketManager_STOP_BYTE__var =PacketManager_STOP_BYTE__var;
-this.PacketManager_ESCAPE_BYTE__var =PacketManager_ESCAPE_BYTE__var;
-this.PacketManager_CODE_POSITION__var =PacketManager_CODE_POSITION__var;
-this.PacketManager_LENGTH_POSITION__var =PacketManager_LENGTH_POSITION__var;
-this.PacketManager_DATA_POSITION__var =PacketManager_DATA_POSITION__var;
-this.PacketManager_buffer__var =PacketManager_buffer__var;
-this.PacketManager_index__var =PacketManager_index__var;//bindings
+//bindings
 var connectors = [];
 this.getConnectors = function() {
 return connectors;
@@ -86,118 +75,28 @@ return queue;
 
 //callbacks for third-party listeners
 //ThingML-defined functions
-function serializeInteger(SerializerJS_serializeInteger_d__var) {
-
-        var l = SerializerJS_serializeInteger_d__var;
-        for ( var index = 0; index < 2; index ++ ) {
-            var b = l & 0xff;
-            storeByte(b)
-            l = (l - b) / 256 ;
-        }
-        
+function cancel() {
+clearTimeout(this.timer);
 }
 
-this.serializeInteger = function(SerializerJS_serializeInteger_d__var) {
-serializeInteger(SerializerJS_serializeInteger_d__var);}
+this.cancel = function() {
+cancel();}
 
-function serializeUInt16(SerializerJS_serializeUInt16_d__var) {
-serializeInteger(SerializerJS_serializeUInt16_d__var);
+function start(TimerJS_start_delay__var) {
+console.log("timer.start");
+this.timer = setTimeout(onTimeout,TimerJS_start_delay__var);
 }
 
-this.serializeUInt16 = function(SerializerJS_serializeUInt16_d__var) {
-serializeUInt16(SerializerJS_serializeUInt16_d__var);}
+this.start = function(TimerJS_start_delay__var) {
+start(TimerJS_start_delay__var);}
 
-function escape() {
-var escaped__var = [];
-
-var stop__var = PacketManager_DATA_POSITION__var + PacketManager_buffer__var[PacketManager_LENGTH_POSITION__var]
-;
-
-var i__var = 0;
-
-var j__var = 0;
-
-escaped__var[j__var] = PacketManager_START_BYTE__var;
-j__var = j__var + 1;
-var current__var;
-
-while(i__var < stop__var) {
-current__var = PacketManager_buffer__var[i__var]
-;
-if(current__var === PacketManager_START_BYTE__var || current__var === PacketManager_STOP_BYTE__var || current__var === PacketManager_ESCAPE_BYTE__var) {
-escaped__var[j__var] = PacketManager_ESCAPE_BYTE__var;
-j__var = j__var + 1;
-
-}
-escaped__var[j__var] = current__var;
-j__var = j__var + 1;
-i__var = i__var + 1;
-
-}
-escaped__var[j__var] = PacketManager_STOP_BYTE__var;
-return escaped__var;
+function onTimeout() {
+console.log("timer.onTimeout");
+sendTimer_timeoutOnTimer();
 }
 
-this.escape = function() {
-escape();}
-
-function send() {
-sendWrite_bytesOnOut(escape());
-}
-
-this.send = function() {
-send();}
-
-function setHeader(PacketManager_setHeader_code__var, PacketManager_setHeader_length__var) {
-PacketManager_index__var = 0;
-storeByte(1);
-storeByte(0);
-storeByte(0);
-PacketManager_CODE_POSITION__var = PacketManager_index__var;
-storeByte(PacketManager_setHeader_code__var);
-PacketManager_LENGTH_POSITION__var = PacketManager_index__var;
-storeByte(PacketManager_setHeader_length__var);
-PacketManager_DATA_POSITION__var = PacketManager_index__var;
-PacketManager_index__var = PacketManager_DATA_POSITION__var;
-}
-
-this.setHeader = function(PacketManager_setHeader_code__var, PacketManager_setHeader_length__var) {
-setHeader(PacketManager_setHeader_code__var, PacketManager_setHeader_length__var);}
-
-function storeByte(PacketManager_storeByte_b__var) {
-if(PacketManager_index__var === PacketManager_MAX_PACKET_SIZE__var) {
-console.log("ERROR: " + "BUFFER OVERFLOW: " + PacketManager_storeByte_b__var + " has been ignored. Current index = " + PacketManager_index__var);
-
-}
-if(PacketManager_index__var < PacketManager_MAX_PACKET_SIZE__var) {
-PacketManager_buffer__var[PacketManager_index__var] = PacketManager_storeByte_b__var;
-PacketManager_index__var = PacketManager_index__var + 1;
-
-}
-}
-
-this.storeByte = function(PacketManager_storeByte_b__var) {
-storeByte(PacketManager_storeByte_b__var);}
-
-function readByte() {
-var b__var;
-
-if(PacketManager_index__var < PacketManager_MAX_PACKET_SIZE__var) {
-b__var = PacketManager_buffer__var[PacketManager_index__var]
-;
-PacketManager_index__var = PacketManager_index__var + 1;
-
-}
-if(PacketManager_index__var === PacketManager_MAX_PACKET_SIZE__var) {
-console.log("ERROR: " + "BUFFER OVERFLOW: trying to read out of buffer boundaries");
-b__var = PacketManager_STOP_BYTE__var;
-
-}
-return b__var;
-}
-
-this.readByte = function() {
-readByte();}
+this.onTimeout = function() {
+onTimeout();}
 
 //Internal functions
 function _send(message) {
@@ -210,67 +109,68 @@ c.forward(message);
 }
 }
 
-function sendWrite_bytesOnOut(b) {
-var msg = '{"message":"write_bytes","port":"out_c", "b":[' + b + ']}';
+function sendTimer_timeoutOnTimer() {
+var msg = '{"message":"timer_timeout","port":"timer_s"}';
 _send(msg);
 }
 
 //Init state machine
-this.MessageSerializer_SerializerBehavior = buildStateMachine("SerializerBehavior");
-var MessageSerializer_SerializerBehavior_default = buildRegion("_default", this.MessageSerializer_SerializerBehavior);
-this._initial_MessageSerializer_SerializerBehavior = buildInitialState("_initial", MessageSerializer_SerializerBehavior_default);
+this.TimerJS_SoftTimer = buildStateMachine("SoftTimer");
+var TimerJS_SoftTimer_default = buildRegion("_default", this.TimerJS_SoftTimer);
+this._initial_TimerJS_SoftTimer = buildInitialState("_initial", TimerJS_SoftTimer_default);
 //State machine (states and regions)
-var MessageSerializer_SerializerBehavior_Serialize = buildSimpleState("Serialize", MessageSerializer_SerializerBehavior_default);
-MessageSerializer_SerializerBehavior_Serialize.entry = [MessageSerializer_SerializerBehavior_Serialize_entry];
+var TimerJS_SoftTimer_default = buildSimpleState("default", TimerJS_SoftTimer_default);
+TimerJS_SoftTimer_default.entry = [TimerJS_SoftTimer_default_entry];
 //State machine (transitions)
-var t0 = new buildEmptyTransition(this._initial_MessageSerializer_SerializerBehavior, MessageSerializer_SerializerBehavior_Serialize);
-var t1 = buildTransition(MessageSerializer_SerializerBehavior_Serialize, null, function (s, c) {var json = JSON.parse(c); return json.port === "RemoteControl_c" && json.message === "changeDisplay"});
+var t0 = new buildEmptyTransition(this._initial_TimerJS_SoftTimer, TimerJS_SoftTimer_default);
+var t1 = buildTransition(TimerJS_SoftTimer_default, null, function (s, c) {var json = JSON.parse(c); return json.port === "timer_s" && json.message === "timer_cancel"});
 t1.effect = [t1_effect];
+var t2 = buildTransition(TimerJS_SoftTimer_default, null, function (s, c) {var json = JSON.parse(c); return json.port === "timer_s" && json.message === "timer_start" && json.delay > 0});
+t2.effect = [t2_effect];
 //State machine (actions on states and transitions)
-function MessageSerializer_SerializerBehavior_entry(context, message) {
-console.log("Coder ready!");
-}
-
-function MessageSerializer_SerializerBehavior_Serialize_entry(context, message) {
-console.log("Coder ready indeed!");
+function TimerJS_SoftTimer_default_entry(context, message) {
+console.log("debug timer on entry");
 }
 
 function t1_effect(context, message) {
 var json = JSON.parse(message);
-console.log("Serializing changeDisplay message");
-setHeader(20, 0);
-send();
+cancel();
+}
+
+function t2_effect(context, message) {
+var json = JSON.parse(message);
+console.log("debug timer");
+start(json.delay);
 }
 
 }
 //Public API for lifecycle management
-MessageSerializer.prototype._stop = function() {
+TimerJS.prototype._stop = function() {
 }
 
 //Public API for third parties
-MessageSerializer.prototype._init = function() {
-console.log("Coder ready!");
-this.MessageSerializer_SerializerBehavior.initialise( this._initial_MessageSerializer_SerializerBehavior );
+TimerJS.prototype._init = function() {
+this.TimerJS_SoftTimer.initialise( this._initial_TimerJS_SoftTimer );
 var msg = this.getQueue().shift();
 while(msg != null) {
-this.MessageSerializer_SerializerBehavior.process(this._initial_MessageSerializer_SerializerBehavior, msg);
+this.TimerJS_SoftTimer.process(this._initial_TimerJS_SoftTimer, msg);
 msg = this.getQueue().shift();
 }
 this.ready = true;
 }
 
-MessageSerializer.prototype._receive = function(message) {//takes a JSONified message
+TimerJS.prototype._receive = function(message) {//takes a JSONified message
 this.getQueue().push(message);
 if (this.ready) {
 var msg = this.getQueue().shift();
 while(msg != null) {
-this.MessageSerializer_SerializerBehavior.process(this._initial_MessageSerializer_SerializerBehavior, msg);
+this.TimerJS_SoftTimer.process(this._initial_TimerJS_SoftTimer, msg);
 msg = this.getQueue().shift();
 }
 }
 }
-MessageSerializer.prototype.getName = function() {
-return "MessageSerializer";
+TimerJS.prototype.getName = function() {
+return "TimerJS";
 }
 
 
@@ -428,179 +328,6 @@ return "WeatherStation";
 
 WeatherStation.prototype.receivechangeDisplayOngui = function() {
 this._receive('{"message":"changeDisplay","port":"gui_c"}');
-}
-
-
-/**
- * Definition for type : SerialJS
- **/
-function SerialJS(SerialJS_serialPort__var, SerialJS_lib__var, SerialJS_serialP__var, SerialJS_buffer__var, SerialJS_index__var) {
-
-this.ready = false;
-//Attributes
-this.SerialJS_serialPort__var =SerialJS_serialPort__var;
-this.SerialJS_lib__var =SerialJS_lib__var;
-this.SerialJS_serialP__var =SerialJS_serialP__var;
-this.SerialJS_buffer__var =SerialJS_buffer__var;
-this.SerialJS_index__var =SerialJS_index__var;//bindings
-var connectors = [];
-this.getConnectors = function() {
-return connectors;
-}
-
-//message queue
-var queue = [];
-this.getQueue = function() {
-return queue;
-}
-
-//callbacks for third-party listeners
-//ThingML-defined functions
-function receive(SerialJS_receive_byte__var) {
-if(SerialJS_buffer__var[0]
- === 0x13 && SerialJS_receive_byte__var === 0x12 || SerialJS_buffer__var[0]
- === 0x12) {
-if( !(SerialJS_receive_byte__var === 0x13) || SerialJS_buffer__var[SerialJS_index__var - 1]
- === 0x7D) {
-SerialJS_buffer__var[SerialJS_index__var] = SerialJS_receive_byte__var;
-SerialJS_index__var = SerialJS_index__var + 1;
-
-}
-if(SerialJS_receive_byte__var === 0x13 &&  !(SerialJS_buffer__var[SerialJS_index__var - 1]
- === 0x7D)) {
-sendReceive_bytesOnRead(SerialJS_buffer__var);
-SerialJS_index__var = 0;
-var i__var = 0;
-
-while(i__var < 18) {
-SerialJS_buffer__var[i__var] = 0x13;
-i__var = i__var + 1;
-
-}
-
-}
-
-}
-}
-
-this.receive = function(SerialJS_receive_byte__var) {
-receive(SerialJS_receive_byte__var);}
-
-function initSerial() {
-var i__var = 0;
-
-while(i__var < 18) {
-SerialJS_buffer__var[i__var] = 0x13;
-i__var = i__var + 1;
-
-}
-SerialJS_serialP__var = new SerialJS_lib__var.SerialPort(SerialJS_serialPort__var, {baudrate: 9600,   parser: SerialJS_lib__var.parsers.byteLength(1)}, false);;
-SerialJS_serialP__var.open(function (error) {
-if (error)
-console.log("ERROR: " + "Problem opening the serial port... It might work, though most likely not :-)");
-else
-SerialJS_serialP__var.on('data', function(data) {
-receive(data[0]);
-});
-console.log("Serial port opened sucessfully!");
-})
-}
-
-this.initSerial = function() {
-initSerial();}
-
-function killSerial() {
-SerialJS_serialP__var.close(function (error) {
-if (error)
-console.log("ERROR: " + "Problem closing the serial port...");
-else
-console.log("serial port closed!");
-});
-}
-
-this.killSerial = function() {
-killSerial();}
-
-//Internal functions
-function _send(message) {
-var json = JSON.parse(message);
-var port = json.port;
-var arrayLength = connectors.length;
-for (var i = 0; i < arrayLength; i++) {
-var c = connectors[i];
-c.forward(message);
-}
-}
-
-function sendReceive_bytesOnRead(b) {
-var msg = '{"message":"receive_bytes","port":"read_s", "b":[' + b + ']}';
-_send(msg);
-}
-
-function sendReceive_bytesOnIOStream(b) {
-var msg = '{"message":"receive_bytes","port":"IOStream_s", "b":[' + b + ']}';
-_send(msg);
-}
-
-//Init state machine
-this.SerialJS_behavior = buildStateMachine("behavior");
-var SerialJS_behavior_default = buildRegion("_default", this.SerialJS_behavior);
-this._initial_SerialJS_behavior = buildInitialState("_initial", SerialJS_behavior_default);
-//State machine (states and regions)
-var SerialJS_behavior_default = buildSimpleState("default", SerialJS_behavior_default);
-//State machine (transitions)
-var t0 = new buildEmptyTransition(this._initial_SerialJS_behavior, SerialJS_behavior_default);
-var t1 = buildTransition(SerialJS_behavior_default, null, function (s, c) {var json = JSON.parse(c); return json.port === "write_s" && json.message === "write_bytes"});
-t1.effect = [t1_effect];
-//State machine (actions on states and transitions)
-function SerialJS_behavior_entry(context, message) {
-initSerial();
-console.log("Serial port ready!");
-}
-
-function SerialJS_behavior_exit(context, message) {
-killSerial();
-console.log("Serial port killed, RIP!");
-}
-
-function t1_effect(context, message) {
-var json = JSON.parse(message);
-SerialJS_serialP__var.write(json.b, function(err, results) {
-});
-}
-
-}
-//Public API for lifecycle management
-SerialJS.prototype._stop = function() {
-this.killSerial();
-console.log("Serial port killed, RIP!");
-}
-
-//Public API for third parties
-SerialJS.prototype._init = function() {
-this.initSerial();
-console.log("Serial port ready!");
-this.SerialJS_behavior.initialise( this._initial_SerialJS_behavior );
-var msg = this.getQueue().shift();
-while(msg != null) {
-this.SerialJS_behavior.process(this._initial_SerialJS_behavior, msg);
-msg = this.getQueue().shift();
-}
-this.ready = true;
-}
-
-SerialJS.prototype._receive = function(message) {//takes a JSONified message
-this.getQueue().push(message);
-if (this.ready) {
-var msg = this.getQueue().shift();
-while(msg != null) {
-this.SerialJS_behavior.process(this._initial_SerialJS_behavior, msg);
-msg = this.getQueue().shift();
-}
-}
-}
-SerialJS.prototype.getName = function() {
-return "SerialJS";
 }
 
 
@@ -917,13 +644,17 @@ return "MessageDeserializer";
 
 
 /**
- * Definition for type : TimerJS
+ * Definition for type : SerialJS
  **/
-function TimerJS() {
+function SerialJS(SerialJS_serialPort__var, SerialJS_lib__var, SerialJS_serialP__var, SerialJS_buffer__var, SerialJS_index__var) {
 
 this.ready = false;
 //Attributes
-//bindings
+this.SerialJS_serialPort__var =SerialJS_serialPort__var;
+this.SerialJS_lib__var =SerialJS_lib__var;
+this.SerialJS_serialP__var =SerialJS_serialP__var;
+this.SerialJS_buffer__var =SerialJS_buffer__var;
+this.SerialJS_index__var =SerialJS_index__var;//bindings
 var connectors = [];
 this.getConnectors = function() {
 return connectors;
@@ -937,28 +668,70 @@ return queue;
 
 //callbacks for third-party listeners
 //ThingML-defined functions
-function cancel() {
-clearTimeout(this.timer);
+function receive(SerialJS_receive_byte__var) {
+if(SerialJS_buffer__var[0]
+ === 0x13 && SerialJS_receive_byte__var === 0x12 || SerialJS_buffer__var[0]
+ === 0x12) {
+if( !(SerialJS_receive_byte__var === 0x13) || SerialJS_buffer__var[SerialJS_index__var - 1]
+ === 0x7D) {
+SerialJS_buffer__var[SerialJS_index__var] = SerialJS_receive_byte__var;
+SerialJS_index__var = SerialJS_index__var + 1;
+
+}
+if(SerialJS_receive_byte__var === 0x13 &&  !(SerialJS_buffer__var[SerialJS_index__var - 1]
+ === 0x7D)) {
+sendReceive_bytesOnRead(SerialJS_buffer__var);
+SerialJS_index__var = 0;
+var i__var = 0;
+
+while(i__var < 18) {
+SerialJS_buffer__var[i__var] = 0x13;
+i__var = i__var + 1;
+
 }
 
-this.cancel = function() {
-cancel();}
-
-function start(TimerJS_start_delay__var) {
-console.log("timer.start");
-this.timer = setTimeout(onTimeout,TimerJS_start_delay__var);
 }
 
-this.start = function(TimerJS_start_delay__var) {
-start(TimerJS_start_delay__var);}
-
-function onTimeout() {
-console.log("timer.onTimeout");
-sendTimer_timeoutOnTimer();
+}
 }
 
-this.onTimeout = function() {
-onTimeout();}
+this.receive = function(SerialJS_receive_byte__var) {
+receive(SerialJS_receive_byte__var);}
+
+function initSerial() {
+var i__var = 0;
+
+while(i__var < 18) {
+SerialJS_buffer__var[i__var] = 0x13;
+i__var = i__var + 1;
+
+}
+SerialJS_serialP__var = new SerialJS_lib__var.SerialPort(SerialJS_serialPort__var, {baudrate: 9600,   parser: SerialJS_lib__var.parsers.byteLength(1)}, false);;
+SerialJS_serialP__var.open(function (error) {
+if (error)
+console.log("ERROR: " + "Problem opening the serial port... It might work, though most likely not :-)");
+else
+SerialJS_serialP__var.on('data', function(data) {
+receive(data[0]);
+});
+console.log("Serial port opened sucessfully!");
+})
+}
+
+this.initSerial = function() {
+initSerial();}
+
+function killSerial() {
+SerialJS_serialP__var.close(function (error) {
+if (error)
+console.log("ERROR: " + "Problem closing the serial port...");
+else
+console.log("serial port closed!");
+});
+}
+
+this.killSerial = function() {
+killSerial();}
 
 //Internal functions
 function _send(message) {
@@ -971,102 +744,328 @@ c.forward(message);
 }
 }
 
-function sendTimer_timeoutOnTimer() {
-var msg = '{"message":"timer_timeout","port":"timer_s"}';
+function sendReceive_bytesOnRead(b) {
+var msg = '{"message":"receive_bytes","port":"read_s", "b":[' + b + ']}';
+_send(msg);
+}
+
+function sendReceive_bytesOnIOStream(b) {
+var msg = '{"message":"receive_bytes","port":"IOStream_s", "b":[' + b + ']}';
 _send(msg);
 }
 
 //Init state machine
-this.TimerJS_SoftTimer = buildStateMachine("SoftTimer");
-var TimerJS_SoftTimer_default = buildRegion("_default", this.TimerJS_SoftTimer);
-this._initial_TimerJS_SoftTimer = buildInitialState("_initial", TimerJS_SoftTimer_default);
+this.SerialJS_behavior = buildStateMachine("behavior");
+var SerialJS_behavior_default = buildRegion("_default", this.SerialJS_behavior);
+this._initial_SerialJS_behavior = buildInitialState("_initial", SerialJS_behavior_default);
 //State machine (states and regions)
-var TimerJS_SoftTimer_default = buildSimpleState("default", TimerJS_SoftTimer_default);
-TimerJS_SoftTimer_default.entry = [TimerJS_SoftTimer_default_entry];
+var SerialJS_behavior_default = buildSimpleState("default", SerialJS_behavior_default);
 //State machine (transitions)
-var t0 = new buildEmptyTransition(this._initial_TimerJS_SoftTimer, TimerJS_SoftTimer_default);
-var t1 = buildTransition(TimerJS_SoftTimer_default, null, function (s, c) {var json = JSON.parse(c); return json.port === "timer_s" && json.message === "timer_cancel"});
+var t0 = new buildEmptyTransition(this._initial_SerialJS_behavior, SerialJS_behavior_default);
+var t1 = buildTransition(SerialJS_behavior_default, null, function (s, c) {var json = JSON.parse(c); return json.port === "write_s" && json.message === "write_bytes"});
 t1.effect = [t1_effect];
-var t2 = buildTransition(TimerJS_SoftTimer_default, null, function (s, c) {var json = JSON.parse(c); return json.port === "timer_s" && json.message === "timer_start" && json.delay > 0});
-t2.effect = [t2_effect];
 //State machine (actions on states and transitions)
-function TimerJS_SoftTimer_default_entry(context, message) {
-console.log("debug timer on entry");
+function SerialJS_behavior_entry(context, message) {
+initSerial();
+console.log("Serial port ready!");
+}
+
+function SerialJS_behavior_exit(context, message) {
+killSerial();
+console.log("Serial port killed, RIP!");
 }
 
 function t1_effect(context, message) {
 var json = JSON.parse(message);
-cancel();
-}
-
-function t2_effect(context, message) {
-var json = JSON.parse(message);
-console.log("debug timer");
-start(json.delay);
+SerialJS_serialP__var.write(json.b, function(err, results) {
+});
 }
 
 }
 //Public API for lifecycle management
-TimerJS.prototype._stop = function() {
+SerialJS.prototype._stop = function() {
+this.killSerial();
+console.log("Serial port killed, RIP!");
 }
 
 //Public API for third parties
-TimerJS.prototype._init = function() {
-this.TimerJS_SoftTimer.initialise( this._initial_TimerJS_SoftTimer );
+SerialJS.prototype._init = function() {
+this.initSerial();
+console.log("Serial port ready!");
+this.SerialJS_behavior.initialise( this._initial_SerialJS_behavior );
 var msg = this.getQueue().shift();
 while(msg != null) {
-this.TimerJS_SoftTimer.process(this._initial_TimerJS_SoftTimer, msg);
+this.SerialJS_behavior.process(this._initial_SerialJS_behavior, msg);
 msg = this.getQueue().shift();
 }
 this.ready = true;
 }
 
-TimerJS.prototype._receive = function(message) {//takes a JSONified message
+SerialJS.prototype._receive = function(message) {//takes a JSONified message
 this.getQueue().push(message);
 if (this.ready) {
 var msg = this.getQueue().shift();
 while(msg != null) {
-this.TimerJS_SoftTimer.process(this._initial_TimerJS_SoftTimer, msg);
+this.SerialJS_behavior.process(this._initial_SerialJS_behavior, msg);
 msg = this.getQueue().shift();
 }
 }
 }
-TimerJS.prototype.getName = function() {
-return "TimerJS";
+SerialJS.prototype.getName = function() {
+return "SerialJS";
 }
 
-var JSWeatherNode_app = new WeatherStation();
-var JSWeatherNode_serializer_buffer_array = [];
-var JSWeatherNode_serializer = new MessageSerializer(2, 8, 2, 16, 0x12, 0x13, 0x7D, 3, 4, 5, JSWeatherNode_serializer_buffer_array, 0);
-var JSWeatherNode_serial_buffer_array = [];
-var JSWeatherNode_serial = new SerialJS("COM13", require("serialport"), null, JSWeatherNode_serial_buffer_array, 0);
+
+/**
+ * Definition for type : MessageSerializer
+ **/
+function MessageSerializer(PacketManager_lengthInteger__var, PacketManager_lengthString__var, PacketManager_lengthUInt16__var, PacketManager_MAX_PACKET_SIZE__var, PacketManager_START_BYTE__var, PacketManager_STOP_BYTE__var, PacketManager_ESCAPE_BYTE__var, PacketManager_CODE_POSITION__var, PacketManager_LENGTH_POSITION__var, PacketManager_DATA_POSITION__var, PacketManager_buffer__var, PacketManager_index__var) {
+
+this.ready = false;
+//Attributes
+this.PacketManager_lengthInteger__var =PacketManager_lengthInteger__var;
+this.PacketManager_lengthString__var =PacketManager_lengthString__var;
+this.PacketManager_lengthUInt16__var =PacketManager_lengthUInt16__var;
+this.PacketManager_MAX_PACKET_SIZE__var =PacketManager_MAX_PACKET_SIZE__var;
+this.PacketManager_START_BYTE__var =PacketManager_START_BYTE__var;
+this.PacketManager_STOP_BYTE__var =PacketManager_STOP_BYTE__var;
+this.PacketManager_ESCAPE_BYTE__var =PacketManager_ESCAPE_BYTE__var;
+this.PacketManager_CODE_POSITION__var =PacketManager_CODE_POSITION__var;
+this.PacketManager_LENGTH_POSITION__var =PacketManager_LENGTH_POSITION__var;
+this.PacketManager_DATA_POSITION__var =PacketManager_DATA_POSITION__var;
+this.PacketManager_buffer__var =PacketManager_buffer__var;
+this.PacketManager_index__var =PacketManager_index__var;//bindings
+var connectors = [];
+this.getConnectors = function() {
+return connectors;
+}
+
+//message queue
+var queue = [];
+this.getQueue = function() {
+return queue;
+}
+
+//callbacks for third-party listeners
+//ThingML-defined functions
+function serializeInteger(SerializerJS_serializeInteger_d__var) {
+
+        var l = SerializerJS_serializeInteger_d__var;
+        for ( var index = 0; index < 2; index ++ ) {
+            var b = l & 0xff;
+            storeByte(b)
+            l = (l - b) / 256 ;
+        }
+        
+}
+
+this.serializeInteger = function(SerializerJS_serializeInteger_d__var) {
+serializeInteger(SerializerJS_serializeInteger_d__var);}
+
+function serializeUInt16(SerializerJS_serializeUInt16_d__var) {
+serializeInteger(SerializerJS_serializeUInt16_d__var);
+}
+
+this.serializeUInt16 = function(SerializerJS_serializeUInt16_d__var) {
+serializeUInt16(SerializerJS_serializeUInt16_d__var);}
+
+function escape() {
+var escaped__var = [];
+
+var stop__var = PacketManager_DATA_POSITION__var + PacketManager_buffer__var[PacketManager_LENGTH_POSITION__var]
+;
+
+var i__var = 0;
+
+var j__var = 0;
+
+escaped__var[j__var] = PacketManager_START_BYTE__var;
+j__var = j__var + 1;
+var current__var;
+
+while(i__var < stop__var) {
+current__var = PacketManager_buffer__var[i__var]
+;
+if(current__var === PacketManager_START_BYTE__var || current__var === PacketManager_STOP_BYTE__var || current__var === PacketManager_ESCAPE_BYTE__var) {
+escaped__var[j__var] = PacketManager_ESCAPE_BYTE__var;
+j__var = j__var + 1;
+
+}
+escaped__var[j__var] = current__var;
+j__var = j__var + 1;
+i__var = i__var + 1;
+
+}
+escaped__var[j__var] = PacketManager_STOP_BYTE__var;
+return escaped__var;
+}
+
+this.escape = function() {
+escape();}
+
+function send() {
+sendWrite_bytesOnOut(escape());
+}
+
+this.send = function() {
+send();}
+
+function setHeader(PacketManager_setHeader_code__var, PacketManager_setHeader_length__var) {
+PacketManager_index__var = 0;
+storeByte(1);
+storeByte(0);
+storeByte(0);
+PacketManager_CODE_POSITION__var = PacketManager_index__var;
+storeByte(PacketManager_setHeader_code__var);
+PacketManager_LENGTH_POSITION__var = PacketManager_index__var;
+storeByte(PacketManager_setHeader_length__var);
+PacketManager_DATA_POSITION__var = PacketManager_index__var;
+PacketManager_index__var = PacketManager_DATA_POSITION__var;
+}
+
+this.setHeader = function(PacketManager_setHeader_code__var, PacketManager_setHeader_length__var) {
+setHeader(PacketManager_setHeader_code__var, PacketManager_setHeader_length__var);}
+
+function storeByte(PacketManager_storeByte_b__var) {
+if(PacketManager_index__var === PacketManager_MAX_PACKET_SIZE__var) {
+console.log("ERROR: " + "BUFFER OVERFLOW: " + PacketManager_storeByte_b__var + " has been ignored. Current index = " + PacketManager_index__var);
+
+}
+if(PacketManager_index__var < PacketManager_MAX_PACKET_SIZE__var) {
+PacketManager_buffer__var[PacketManager_index__var] = PacketManager_storeByte_b__var;
+PacketManager_index__var = PacketManager_index__var + 1;
+
+}
+}
+
+this.storeByte = function(PacketManager_storeByte_b__var) {
+storeByte(PacketManager_storeByte_b__var);}
+
+function readByte() {
+var b__var;
+
+if(PacketManager_index__var < PacketManager_MAX_PACKET_SIZE__var) {
+b__var = PacketManager_buffer__var[PacketManager_index__var]
+;
+PacketManager_index__var = PacketManager_index__var + 1;
+
+}
+if(PacketManager_index__var === PacketManager_MAX_PACKET_SIZE__var) {
+console.log("ERROR: " + "BUFFER OVERFLOW: trying to read out of buffer boundaries");
+b__var = PacketManager_STOP_BYTE__var;
+
+}
+return b__var;
+}
+
+this.readByte = function() {
+readByte();}
+
+//Internal functions
+function _send(message) {
+var json = JSON.parse(message);
+var port = json.port;
+var arrayLength = connectors.length;
+for (var i = 0; i < arrayLength; i++) {
+var c = connectors[i];
+c.forward(message);
+}
+}
+
+function sendWrite_bytesOnOut(b) {
+var msg = '{"message":"write_bytes","port":"out_c", "b":[' + b + ']}';
+_send(msg);
+}
+
+//Init state machine
+this.MessageSerializer_SerializerBehavior = buildStateMachine("SerializerBehavior");
+var MessageSerializer_SerializerBehavior_default = buildRegion("_default", this.MessageSerializer_SerializerBehavior);
+this._initial_MessageSerializer_SerializerBehavior = buildInitialState("_initial", MessageSerializer_SerializerBehavior_default);
+//State machine (states and regions)
+var MessageSerializer_SerializerBehavior_Serialize = buildSimpleState("Serialize", MessageSerializer_SerializerBehavior_default);
+MessageSerializer_SerializerBehavior_Serialize.entry = [MessageSerializer_SerializerBehavior_Serialize_entry];
+//State machine (transitions)
+var t0 = new buildEmptyTransition(this._initial_MessageSerializer_SerializerBehavior, MessageSerializer_SerializerBehavior_Serialize);
+var t1 = buildTransition(MessageSerializer_SerializerBehavior_Serialize, null, function (s, c) {var json = JSON.parse(c); return json.port === "RemoteControl_c" && json.message === "changeDisplay"});
+t1.effect = [t1_effect];
+//State machine (actions on states and transitions)
+function MessageSerializer_SerializerBehavior_entry(context, message) {
+console.log("Coder ready!");
+}
+
+function MessageSerializer_SerializerBehavior_Serialize_entry(context, message) {
+console.log("Coder ready indeed!");
+}
+
+function t1_effect(context, message) {
+var json = JSON.parse(message);
+console.log("Serializing changeDisplay message");
+setHeader(20, 0);
+send();
+}
+
+}
+//Public API for lifecycle management
+MessageSerializer.prototype._stop = function() {
+}
+
+//Public API for third parties
+MessageSerializer.prototype._init = function() {
+console.log("Coder ready!");
+this.MessageSerializer_SerializerBehavior.initialise( this._initial_MessageSerializer_SerializerBehavior );
+var msg = this.getQueue().shift();
+while(msg != null) {
+this.MessageSerializer_SerializerBehavior.process(this._initial_MessageSerializer_SerializerBehavior, msg);
+msg = this.getQueue().shift();
+}
+this.ready = true;
+}
+
+MessageSerializer.prototype._receive = function(message) {//takes a JSONified message
+this.getQueue().push(message);
+if (this.ready) {
+var msg = this.getQueue().shift();
+while(msg != null) {
+this.MessageSerializer_SerializerBehavior.process(this._initial_MessageSerializer_SerializerBehavior, msg);
+msg = this.getQueue().shift();
+}
+}
+}
+MessageSerializer.prototype.getName = function() {
+return "MessageSerializer";
+}
+
 var JSWeatherNode_timer = new TimerJS();
 var JSWeatherNode_deserializer_buffer_array = [];
 var JSWeatherNode_deserializer = new MessageDeserializer(2, 8, 2, 16, 0x12, 0x13, 0x7D, 3, 4, 5, JSWeatherNode_deserializer_buffer_array, 0);
+var JSWeatherNode_serializer_buffer_array = [];
+var JSWeatherNode_serializer = new MessageSerializer(2, 8, 2, 16, 0x12, 0x13, 0x7D, 3, 4, 5, JSWeatherNode_serializer_buffer_array, 0);
+var JSWeatherNode_app = new WeatherStation();
+var JSWeatherNode_serial_buffer_array = [];
+var JSWeatherNode_serial = new SerialJS("COM13", require("serialport"), null, JSWeatherNode_serial_buffer_array, 0);
 JSWeatherNode_serializer.getConnectors().push(new Connector(JSWeatherNode_serial, JSWeatherNode_serializer, "write_s", "out_c"));
 JSWeatherNode_serial.getConnectors().push(new Connector(JSWeatherNode_serializer, JSWeatherNode_serial, "out_c", "write_s"));
-JSWeatherNode_serializer.getConnectors().push(new Connector(JSWeatherNode_app, JSWeatherNode_serializer, "RemoteControlOut_s", "RemoteControl_c"));
-JSWeatherNode_app.getConnectors().push(new Connector(JSWeatherNode_serializer, JSWeatherNode_app, "RemoteControl_c", "RemoteControlOut_s"));
-JSWeatherNode_app.getConnectors().push(new Connector(JSWeatherNode_timer, JSWeatherNode_app, "timer_s", "timer_c"));
-JSWeatherNode_timer.getConnectors().push(new Connector(JSWeatherNode_app, JSWeatherNode_timer, "timer_c", "timer_s"));
 JSWeatherNode_deserializer.getConnectors().push(new Connector(JSWeatherNode_serial, JSWeatherNode_deserializer, "read_s", "in_c"));
 JSWeatherNode_serial.getConnectors().push(new Connector(JSWeatherNode_deserializer, JSWeatherNode_serial, "in_c", "read_s"));
+JSWeatherNode_serializer.getConnectors().push(new Connector(JSWeatherNode_app, JSWeatherNode_serializer, "RemoteControlOut_s", "RemoteControl_c"));
+JSWeatherNode_app.getConnectors().push(new Connector(JSWeatherNode_serializer, JSWeatherNode_app, "RemoteControl_c", "RemoteControlOut_s"));
 JSWeatherNode_deserializer.getConnectors().push(new Connector(JSWeatherNode_app, JSWeatherNode_deserializer, "RemoteControlIn_s", "RemoteControl_c"));
 JSWeatherNode_app.getConnectors().push(new Connector(JSWeatherNode_deserializer, JSWeatherNode_app, "RemoteControl_c", "RemoteControlIn_s"));
-JSWeatherNode_app._init();
-JSWeatherNode_serializer._init();
-JSWeatherNode_timer._init();
+JSWeatherNode_app.getConnectors().push(new Connector(JSWeatherNode_timer, JSWeatherNode_app, "timer_s", "timer_c"));
+JSWeatherNode_timer.getConnectors().push(new Connector(JSWeatherNode_app, JSWeatherNode_timer, "timer_c", "timer_s"));
 JSWeatherNode_deserializer._init();
 JSWeatherNode_serial._init();
+JSWeatherNode_serializer._init();
+JSWeatherNode_app._init();
+JSWeatherNode_timer._init();
 //terminate all things on SIGINT (e.g. CTRL+C)
 process.on('SIGINT', function() {
-JSWeatherNode_app._stop();
-JSWeatherNode_serial._stop();
-JSWeatherNode_deserializer._stop();
 JSWeatherNode_serializer._stop();
+JSWeatherNode_deserializer._stop();
+JSWeatherNode_app._stop();
 JSWeatherNode_timer._stop();
+JSWeatherNode_serial._stop();
 });
-
 
 
 /*
@@ -1078,7 +1077,7 @@ JSWeatherNode_timer._stop();
 * and return a boolean telling if the message should go forward (true) or if it should  be ignored (false)
 * It basically allows to wrap a subset of the ports/messages of the thing (instance)
 */
-function WebSocketGuiListener(thing, port, sendFilters, receiveFilters) {
+function WebSocketWrapper(thing, port, receiveFilters, sendFilters) {
 
 var WebSocketServer = require('websocket').server;
 var WebSocketClient = require('websocket').client;
@@ -1119,17 +1118,28 @@ wsServer.on('request', function(request) {
       return;
     }
 
-	
     var connection = request.accept(null, request.origin);
 	clients.push(connection);
     console.log((new Date()) + ' Connection accepted.');
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
-            console.log('Received Message: ' + message.utf8Data);
-			var arrayLength = clients.length;
-			for (var i = 0; i < arrayLength; i++) {
-				clients[i].sendUTF(message.utf8Data);
-			}            
+            var json;
+			try {
+				json = JSON.parse(message.utf8Data);
+				var arrayLength = receiveFilters.length;
+				for (var i = 0; i < arrayLength; i++) {
+					if (receiveFilters[i][0](json.port.split("_")[0], json.message)) {
+						receiveFilters[i][1](/*PARAMS*/);
+						console.log("Forwarded: '" + message.utf8Data + "'");
+					}
+				}
+				var arrayLength = clients.length;
+				for (var j = 0; j < arrayLength; j++) {
+					clients[j].sendUTF(message.utf8Data);
+				}
+			} catch (e) {
+				console.log(e);
+			}
         }
     });
     connection.on('close', function(reasonCode, description) {
@@ -1140,9 +1150,6 @@ wsServer.on('request', function(request) {
 		}
     });
 });
-
-
-
 
 	//client
 	var client = new WebSocketClient();
@@ -1162,26 +1169,7 @@ wsServer.on('request', function(request) {
 			console.log('thingml-protocol Connection Closed');
 			clientConnection = null;
 		});
-		connection.on('message', function(message) {
-			if (message.type === 'utf8') {
-				var json;
-				try {
-					json = JSON.parse(message.utf8Data);
-					var arrayLength = receiveFilters.length;
-					for (var i = 0; i < arrayLength; i++) {
-						if (receiveFilters[i](json.port.split("_")[0], json.message)) {
-							thing.receivechangeDisplayOngui();
-							console.log("Forwarded: '" + message.utf8Data + "'");
-						} else {
-							console.log("Ignored: '" + message.utf8Data + "'");
-						}
-					}  					
-				} catch (e) {
-					console.log("JSON: cannot parse " + message.utf8Data);
-				}				
-			}
-		});
-	});    
+	});
 
 	client.connect('ws://localhost:' + port + '/', null);
 
@@ -1190,7 +1178,7 @@ wsServer.on('request', function(request) {
 		try {
 			var json = JSON.parse(message);
 			json.thing = thing.getName();
-			json.port = json.port.split("_")[0];			
+			json.port = json.port.split("_")[0];
 			var arrayLength = sendFilters.length;
 			for (var i = 0; i < arrayLength; i++) {
 				if (sendFilters[i](json.port, json.message)) {
@@ -1201,11 +1189,10 @@ wsServer.on('request', function(request) {
 				}
 			}
 		} catch (e) {
-			// An error has occured, handle it, by e.g. logging it
-			console.log("JSON: cannot parse " + message);
-		}				
-	}	
-	
+			console.log(e);
+		}
+	}
+
 	this._stop = function() {
 		console.log("Stopping WebSocket...");
 		clientConnection.close();
@@ -1215,12 +1202,103 @@ wsServer.on('request', function(request) {
 	}
 }
 
-var wsGuiListener = new WebSocketGuiListener(JSWeatherNode_app, 8080, 
+//Instantiate and link per instance and per port WebSocket wrappers
+console.log("[WebSocket_gui] Server starting on port 9000");
+var JSWeatherNode_app_gui_ws = new WebSocketWrapper(JSWeatherNode_app, 9000,
+[[function(port,message){return port === "gui" && message === "changeDisplay"}, function() {JSWeatherNode_app.receivechangeDisplayOngui();}]],
 [function(port,message){return port === "gui" && message === "temperature"},
-function(port,message){return port === "gui" && message === "light"}],
-[function(port,message){return port === "gui" && message === "changeDisplay"}]);
-JSWeatherNode_app.getGuiListeners().push(wsGuiListener.onMessage);
-
+function(port,message){return port === "gui" && message === "light"}]);
+JSWeatherNode_app.getGuiListeners().push(JSWeatherNode_app_gui_ws.onMessage);
 process.on('SIGINT', function() {
-wsGuiListener._stop();
+JSWeatherNode_app_gui_ws.stop();
 });
+
+
+
+
+
+
+function RESTWrapper(thing, port, receiveFilters, sendFilters, remoteURL, remotePort) {
+	var express = require( 'express' ); //Web framework
+	var http = require('http');
+	var bodyParser = require('body-parser')
+
+
+	//Create server
+	var app = express();
+	http.createServer(app).listen(port, function() {
+		console.log( 'Express server listening on port %d in %s mode', port, app.settings.env );
+	});
+	// parse application/x-www-form-urlencoded
+	app.use(bodyParser.urlencoded({ extended: false }))
+
+	// parse application/json
+	app.use(bodyParser.json())
+
+	//Router
+	var arrayLength = receiveFilters.length;
+	for (var i = 0; i < arrayLength; i++) {
+		var callback = receiveFilters[i][1];
+		app.get(receiveFilters[i][0], function( request, response ) {
+			callback(/*params*/);
+			response.send("OK!");
+		});	
+	}
+	///////////////Just for test (when posting on local host)///////////////////////
+	arrayLength = sendFilters.length;
+	for (var i = 0; i < arrayLength; i++) {
+		app.post(sendFilters[i][0], function( request, response ) {
+			console.dir(request.body);
+			response.send("Received! " + JSON.stringify(request.body, null, 2));
+		});	
+	}
+	///////////////END Just for test (when posting on local host)///////////////////////
+	
+	this.onMessage = function(message) {
+		console.log("DEBUUUUUUUUUUUUUUUUUUUUUUUUUUUUUG: " + message);
+		var json;
+		try {
+			var json = JSON.parse(message);
+			json.thing = thing.getName();
+			json.port = json.port.split("_")[0];
+			var arrayLength = sendFilters.length;
+			for (var i = 0; i < arrayLength; i++) {
+				if (sendFilters[i][1](json.port, json.message)) {
+					var options = {
+						host: remoteURL,
+						port: remotePort,
+						path: sendFilters[i][0],
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'Content-Length': Buffer.byteLength(message)
+						}
+					};
+					var req = http.request(options, function(res) {
+						console.log('STATUS: ' + res.statusCode);
+						console.log('HEADERS: ' + JSON.stringify(res.headers));
+						res.setEncoding('utf8');
+						res.on('data', function (chunk) {
+							console.log('BODY: ' + chunk);
+						});
+					});				
+					req.write(message);
+					req.end();
+					console.log("Sent: '" + message + "'");
+				} else {
+					console.log("Ignored: '" + message + "'");
+				}
+			}
+		} catch (e) {
+			console.log(e);
+		}
+	}
+	
+}
+
+var rest = new RESTWrapper(JSWeatherNode_app, 8090,
+[["/gui/changeDisplay", function() {JSWeatherNode_app.receivechangeDisplayOngui();}]],
+[["/gui/temperature", function(port,message){return port === "gui" && message === "temperature"}],
+["/gui/light", function(port,message){return port === "gui" && message === "light"}]],
+"localhost", 8090);
+JSWeatherNode_app.getGuiListeners().push(rest.onMessage);
