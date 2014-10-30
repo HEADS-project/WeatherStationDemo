@@ -1069,8 +1069,16 @@ JSWeatherNode_timer._stop();
 
 
 
-
-function WebSocketGuiListener(thing, port) {
+/*
+* - thing: the instance we want to wrap into websocket
+* - port: the ports used by the websocket
+* - sendFilters and receiveFilters are arrays of functions, which takes 2 params
+* 	- port name
+*   - message name
+* and return a boolean telling if the message should go forward (true) or if it should  be ignored (false)
+* It basically allows to wrap a subset of the ports/messages of the thing (instance)
+*/
+function WebSocketGuiListener(thing, port, sendFilters, receiveFilters) {
 
 var WebSocketServer = require('websocket').server;
 var WebSocketClient = require('websocket').client;
@@ -1159,12 +1167,16 @@ wsServer.on('request', function(request) {
 				var json;
 				try {
 					json = JSON.parse(message.utf8Data);
-					if (json.port.split("_")[0] === "gui" && json.message === "changeDisplay") {
-						thing.receivechangeDisplayOngui();
-					}
-					console.log("Received: '" + message.utf8Data + "'");
+					var arrayLength = receiveFilters.length;
+					for (var i = 0; i < arrayLength; i++) {
+						if (receiveFilters[i](json.port.split("_")[0], json.message)) {
+							thing.receivechangeDisplayOngui();
+							console.log("Forwarded: '" + message.utf8Data + "'");
+						} else {
+							console.log("Ignored: '" + message.utf8Data + "'");
+						}
+					}  					
 				} catch (e) {
-					// An error has occured, handle it, by e.g. logging it
 					console.log("JSON: cannot parse " + message.utf8Data);
 				}				
 			}
@@ -1178,9 +1190,15 @@ wsServer.on('request', function(request) {
 		try {
 			var json = JSON.parse(message);
 			json.thing = thing.getName();
-			json.port = json.port.split("_")[0];
-			if (json.port === "gui" && json.message === "light" || json.message === "temperature") {
-				clientConnection.sendUTF(JSON.stringify(json));
+			json.port = json.port.split("_")[0];			
+			var arrayLength = sendFilters.length;
+			for (var i = 0; i < arrayLength; i++) {
+				if (sendFilters[i](json.port, json.message)) {
+					clientConnection.sendUTF(JSON.stringify(json));
+					console.log("Sent: '" + message + "'");
+				} else {
+					console.log("Ignored: '" + message + "'");
+				}
 			}
 		} catch (e) {
 			// An error has occured, handle it, by e.g. logging it
@@ -1197,7 +1215,10 @@ wsServer.on('request', function(request) {
 	}
 }
 
-var wsGuiListener = new WebSocketGuiListener(JSWeatherNode_app, 8080);
+var wsGuiListener = new WebSocketGuiListener(JSWeatherNode_app, 8080, 
+[function(port,message){return port === "gui" && message === "temperature"},
+function(port,message){return port === "gui" && message === "light"}],
+[function(port,message){return port === "gui" && message === "changeDisplay"}]);
 JSWeatherNode_app.getGuiListeners().push(wsGuiListener.onMessage);
 
 process.on('SIGINT', function() {
