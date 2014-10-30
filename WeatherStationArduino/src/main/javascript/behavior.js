@@ -1156,11 +1156,17 @@ wsServer.on('request', function(request) {
 		});
 		connection.on('message', function(message) {
 			if (message.type === 'utf8') {
-				var json = JSON.parse(message.utf8Data);
-				if (json.port.split("_")[0] === "gui" && json.message === "changeDisplay") {
-					thing.receivechangeDisplayOngui();
-				}
-				console.log("Received: '" + message.utf8Data + "'");
+				var json;
+				try {
+					json = JSON.parse(message.utf8Data);
+					if (json.port.split("_")[0] === "gui" && json.message === "changeDisplay") {
+						thing.receivechangeDisplayOngui();
+					}
+					console.log("Received: '" + message.utf8Data + "'");
+				} catch (e) {
+					// An error has occured, handle it, by e.g. logging it
+					console.log("JSON: cannot parse " + message.utf8Data);
+				}				
 			}
 		});
 	});    
@@ -1168,13 +1174,18 @@ wsServer.on('request', function(request) {
 	client.connect('ws://localhost:' + port + '/', null);
 
 	this.onMessage = function(message) {
-		console.log(message);
-		var json = JSON.parse(message);
-		json.thing = thing.getName();
-		json.port = json.port.split("_")[0];
-		if (json.port === "gui" && json.message === "light" || json.message === "temperature") {
-			clientConnection.sendUTF(JSON.stringify(json));
-		}
+		var json;
+		try {
+			var json = JSON.parse(message);
+			json.thing = thing.getName();
+			json.port = json.port.split("_")[0];
+			if (json.port === "gui" && json.message === "light" || json.message === "temperature") {
+				clientConnection.sendUTF(JSON.stringify(json));
+			}
+		} catch (e) {
+			// An error has occured, handle it, by e.g. logging it
+			console.log("JSON: cannot parse " + message);
+		}				
 	}	
 	
 	this._stop = function() {
