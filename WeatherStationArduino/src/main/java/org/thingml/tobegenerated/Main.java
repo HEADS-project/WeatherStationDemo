@@ -23,7 +23,7 @@ import java.net.UnknownHostException;
 public class Main {
     // Base URI the Grizzly HTTP server will listen on
     public static final String BASE_URI = "http://localhost:8090/WeatherStation/";
-    public static final String TEST_URI = "http://localhost:8090/WeatherStation/M2MMock/";
+    public static String TEST_URI = "http://localhost:8080/WeatherStation/M2MMock/";
 
     /**
      * Main method.
@@ -115,10 +115,9 @@ public class Main {
 
         //final HttpServer server = startServer();
         // create a resource config that scans for JAX-RS resources and providers
-        // in org.thingml package
-        final ResourceConfig rc = new ResourceConfig();//.packages("org.thingml.tobegenerated");
+        final ResourceConfig rc = new ResourceConfig();
         rc.register(new REST_RemoteControl_Server(WeatherStation_JavaWeatherNode_app));
-        rc.register(new REST_M2M_Mock());
+        //rc.register(new REST_M2M_Mock());
 
         // create and start a new instance of grizzly http server
         // exposing the Jersey application at BASE_URI
@@ -150,7 +149,7 @@ public class Main {
             e.printStackTrace();
         }
 
-        final Server mqttServer = new Server(); //it seems moquette starts something on 8080...
+        /*final Server mqttServer = new Server(); //it seems moquette starts something on 8080...
         mqttServer.startServer();
         System.out.println("MQTT Server started");
         //Bind  a shutdown hook
@@ -159,7 +158,7 @@ public class Main {
             public void run() {
                 mqttServer.stopServer();
             }
-        });
+        });*/
 
         final MQTT_RemoteControl_Client mqqtClient = new MQTT_RemoteControl_Client(WeatherStation_JavaWeatherNode_app);
         WeatherStation_JavaWeatherNode_app.registerOnGui(mqqtClient);

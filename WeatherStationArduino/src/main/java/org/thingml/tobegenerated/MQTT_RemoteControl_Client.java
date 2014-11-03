@@ -101,7 +101,7 @@ public class MQTT_RemoteControl_Client implements IWeatherStation_guiClient {
         }
     }
 
-    private byte[] formatJSON(String type, String value) {
+    private byte[] formatJSON(String type, long value) {
         final Date date = new Date();
         final StringBuilder builder = new StringBuilder();
         builder.append("{");
@@ -110,7 +110,7 @@ public class MQTT_RemoteControl_Client implements IWeatherStation_guiClient {
         builder.append("\"observations\":[");
         builder.append("{\"" + type + "\":\"" + value + "\"}");
         builder.append("]}");
-        System.out.println(builder.toString());
+        System.out.println("MQTT: " + builder.toString());
         return builder.toString().getBytes();
     }
 
@@ -118,10 +118,10 @@ public class MQTT_RemoteControl_Client implements IWeatherStation_guiClient {
     public void temperature_from_gui(short RemoteMonitoringMsgs_temperature_temp__var) {
         try {
             System.out.println("Publishing temperature: " + RemoteMonitoringMsgs_temperature_temp__var);
-            MqttMessage message = new MqttMessage(formatJSON("device.data.temp", String.valueOf(RemoteMonitoringMsgs_temperature_temp__var)));
+            MqttMessage message = new MqttMessage(formatJSON("temp_std", RemoteMonitoringMsgs_temperature_temp__var));
             message.setQos(2);
             mqtt.publish(tempTopic, message);
-            System.out.println("Message published:\n" + formatJSON("device.data.temp", String.valueOf(RemoteMonitoringMsgs_temperature_temp__var)));
+            //System.out.println("Message published:\n" + formatJSON("device.data.temp", String.valueOf(RemoteMonitoringMsgs_temperature_temp__var)));
         } catch (Exception e) {
             System.err.println("Cannot publish on MQTT topic. " + e.getLocalizedMessage());
         }
@@ -129,18 +129,15 @@ public class MQTT_RemoteControl_Client implements IWeatherStation_guiClient {
 
     @Override
     public void light_from_gui(short RemoteMonitoringMsgs_light_light__var) {
-        /*try {
-            ByteBuffer bb = ByteBuffer.allocate(2);
-            bb.putShort(RemoteMonitoringMsgs_light_light__var);
-            System.out.println("Publishing light: " + RemoteMonitoringMsgs_light_light__var);
-            MqttMessage message = new MqttMessage(bb.array());
+        try {
+            System.out.println("Publishing temperature: " + RemoteMonitoringMsgs_light_light__var);
+            MqttMessage message = new MqttMessage(formatJSON("lux_std", RemoteMonitoringMsgs_light_light__var));
             message.setQos(2);
-            mqtt.publish(lightTopic, message);
-            System.out.println("Message published");
-            System.out.println("Message published:\n" + formatJSON("light", String.valueOf(RemoteMonitoringMsgs_light_light__var)));
+            mqtt.publish(tempTopic, message);
+            //System.out.println("Message published:\n" + formatJSON("device.data.temp", String.valueOf(RemoteMonitoringMsgs_temperature_temp__var)));
         } catch (Exception e) {
             System.err.println("Cannot publish on MQTT topic. " + e.getLocalizedMessage());
-        }*/
+        }
     }
 
     /*public void sendChangeDisplay() {//just a test, should be removed later on
