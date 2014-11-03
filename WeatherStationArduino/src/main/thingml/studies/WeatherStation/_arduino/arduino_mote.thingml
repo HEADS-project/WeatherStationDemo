@@ -22,7 +22,7 @@ LedClient, ButtonClient
     property temp : UInt16
     property light : UInt16
     
-    readonly property period : UInt16 = 30000
+    readonly property period : UInt16 = 60000
 	
 	required port Display @sync_send "true"
     {	
@@ -31,7 +31,7 @@ LedClient, ButtonClient
 
     provided port RemoteControl @sync_send "true"
     {
-        sends temperature, light 
+        sends temp, lux 
         receives changeDisplay
     }
 	
@@ -63,7 +63,7 @@ LedClient, ButtonClient
             
             on exit do
                 Led!led_toggle()
-                RemoteControl!temperature(temp)
+                RemoteControl!temp(temp)
                 Led!led_toggle()
             end
         	
@@ -84,7 +84,7 @@ LedClient, ButtonClient
         
            on exit do
                 Led!led_toggle()
-                RemoteControl!light(light)
+                RemoteControl!lux(light)
                 Led!led_toggle()
             end  
         
@@ -116,20 +116,20 @@ thing fragment RemoteMsgs includes RemoteMonitoringMsgs{
 
 thing MessageSerializer includes SerializerArduino, RemoteMsgs {
 required port RemoteControl{
-receives temperature, light
+receives temp, lux
 }
 
 statechart SerializerBehavior init Serialize {
 state Serialize{
-internal event m : RemoteControl?light action
+internal event m : RemoteControl?lux action
 do
 setHeader(11, lengthUInt16)
-serializeUInt16(m.light)
+serializeUInt16(m.lux)
 //serializeInteger(m.light)
 send()
 end
 
-internal event m : RemoteControl?temperature action
+internal event m : RemoteControl?temp action
 do
 setHeader(10, lengthUInt16)
 serializeUInt16(m.temp)

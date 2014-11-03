@@ -72,4 +72,7 @@ thing SerialJava includes IOByteArray
 
 /*configuration TestJavaSerial {
     instance serial : SerialJava
+    instance mock : NetworkArray
+    
+    connector mock.in => serial.IOStream
 }*/
