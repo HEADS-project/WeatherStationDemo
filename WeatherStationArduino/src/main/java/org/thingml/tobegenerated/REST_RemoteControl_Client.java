@@ -58,6 +58,7 @@ public class REST_RemoteControl_Client implements IWeatherStation_guiClient {
 
     private String temperatureToJSON(short temp) {
         DateTime dt = new DateTime();
+
         StringBuilder builder = new StringBuilder();
         builder.append("{\n");
         builder.append("\"nedata\": {\n");
@@ -65,7 +66,7 @@ public class REST_RemoteControl_Client implements IWeatherStation_guiClient {
         builder.append("},\n");
         builder.append("\"name\":\"temp_std\",\n");
         builder.append("\"value\": " + temp + ",\n");
-        builder.append("\"event_timestamp\":\"2014-10-20T10:10:00.452000Z\",\n");
+        builder.append("\"event_timestamp\":\"" + fmt.print(dt) + "\",\n");
         builder.append("\"event_id\":\"101\",\n");
         builder.append("\"source_id\":\"102\"\n");
         builder.append("}\n");
@@ -82,7 +83,8 @@ public class REST_RemoteControl_Client implements IWeatherStation_guiClient {
         builder.append("},\n");
         builder.append("\"name\":\"lux_std\",\n");
         builder.append("\"value\": " + lux + ",\n");
-        builder.append("\"event_timestamp\":\"2014-10-20T10:10:00.452000Z\",\n");
+        builder.append("\"unit\":\"lux\",\n");
+        builder.append("\"event_timestamp\":\"" + fmt.print(dt) + "\",\n");
         builder.append("\"event_id\":\"101\",\n");
         builder.append("\"source_id\":\"102\"\n");
         builder.append("}\n");
@@ -104,7 +106,7 @@ public class REST_RemoteControl_Client implements IWeatherStation_guiClient {
     @Override
     public void light_from_gui(short RemoteMonitoringMsgs_light_light__var) {
         try {
-            last_response = target.path("light").queryParam("api_key", keyApi).request().post(Entity.entity(lightToJSON(RemoteMonitoringMsgs_light_light__var), MediaType.APPLICATION_JSON)).toString();
+            last_response = target.path("/").queryParam("api_key", keyApi).request().post(Entity.entity(lightToJSON(RemoteMonitoringMsgs_light_light__var), MediaType.APPLICATION_JSON)).toString();
         }
         catch(Exception e) {
             last_response = "Exception : " + e.getMessage();

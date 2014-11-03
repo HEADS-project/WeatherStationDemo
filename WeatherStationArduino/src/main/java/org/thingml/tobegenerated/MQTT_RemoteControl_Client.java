@@ -43,7 +43,7 @@ public class MQTT_RemoteControl_Client implements IWeatherStation_guiClient {
                 mqttBroker = prop.getProperty("mqttBroker");
                 deviceId = prop.getProperty("deviceId");
                 tempTopic = prop.getProperty("tempTopic");
-                //lightTopic = prop.getProperty("lightTopic");
+                lightTopic = prop.getProperty("lightTopic");
                 //changeTopic = prop.getProperty("changeTopic");
                 inputStream.close();
             }
