@@ -22,7 +22,7 @@ LedClient, ButtonClient
     property temp : UInt16
     property light : UInt16
     
-    readonly property period : UInt16 = 60000
+    readonly property period : UInt16 = 30000
 	
 	required port Display @sync_send "true"
     {	

@@ -13,7 +13,7 @@ thing WeatherStationGUI includes RemoteMonitoringMsgs
     provided port gui
     {
         sends changeDisplay
-        receives temperature, light
+        receives temp, lux
     }  
 }
 
@@ -22,12 +22,12 @@ thing WeatherStation includes RemoteMonitoringMsgs, TimerClient
     
     provided port RemoteControlIn 
     {
-        receives temperature, light
+        receives temp, lux
     }
     
     required port gui @public "true" {
         receives changeDisplay
-        sends temperature, light    
+        sends temp, lux
     }
     
     provided port RemoteControlOut
@@ -55,16 +55,16 @@ thing WeatherStation includes RemoteMonitoringMsgs, TimerClient
             RemoteControlOut!changeDisplay()
         end
            
-        internal event t : RemoteControlIn?temperature
+        internal event t : RemoteControlIn?temp
         action do
             print("Temperature is: " + t.temp)
-            gui!temperature(t.temp)
+            gui!temp(t.temp)
         end
         
-        internal event l : RemoteControlIn?light
+        internal event l : RemoteControlIn?lux
         action do
-            print("Light is: " + l.light)
-            gui!light(l.light)
+            print("Light is: " + l.lux)
+            gui!lux(l.lux)
         end
         
         internal event gui?changeDisplay
@@ -120,7 +120,7 @@ end
 
 thing MessageDeserializer includes DeserializerJS, ArraySerializer, RemoteMsgs {
 required port RemoteControl{
-sends temperature, light
+sends temp, lux
 }
 
 function forward() do
@@ -138,14 +138,14 @@ function deserializeRemote_temperature()
 do
 readonly var t : UInt16 = deserializeUInt16()
 print("t: " + t)
-RemoteControl!temperature(t)
+RemoteControl!temp(t)
 end
 
 function deserializeRemote_light()
 do
 readonly var t : UInt16 = deserializeUInt16()
 print("l: " + t)
-RemoteControl!light(t)
+RemoteControl!lux(t)
 end
 
 

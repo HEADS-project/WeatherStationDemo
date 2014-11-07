@@ -1,7 +1,10 @@
 import "../../../core/serializer.thingml"
 import "../../../core/comm.thingml"
+import "../../../core/timer.thingml"
+
 import "../../../core/_java/serializer.thingml"
 import "../../../core/_java/serial.thingml"
+import "../../../core/_java/timer.thingml"
 
 import "../weatherAPI.thingml"
 
@@ -16,7 +19,7 @@ thing WeatherStationGUI includes RemoteMonitoringMsgs
     }  
 }
 
-thing WeatherStation includes RemoteMonitoringMsgs
+thing WeatherStation includes RemoteMonitoringMsgs, TimerClient
 {    
     
     required port gui @public "true" {
@@ -49,21 +52,29 @@ thing WeatherStation includes RemoteMonitoringMsgs
            
         internal event t : RemoteControlIn?temp
         action do
+            timer!timer_cancel()
             print("Temperature is: " + t.temp)
             gui!temp(t.temp)
         end
         
         internal event l : RemoteControlIn?lux
         action do
+            timer!timer_cancel()
             print("Light is: " + l.lux)
             gui!lux(l.lux)
         end
         
         internal event gui?changeDisplay
         action do
-            print("Changing Display on Arduino")
+            print("Changing Display on Arduino...")
             RemoteControlOut!changeDisplay()
+            timer!timer_start(1000)
         end            
+        
+        internal event timer?timer_timeout
+        action do
+            error("/!\\ Nothing received from Arduino /!\\")
+        end
        }
         
     }
@@ -174,6 +185,9 @@ configuration JavaWeatherNode
 {
     instance app : WeatherStation
     instance gui : WeatherStationGUI
+    instance timer : TimerJava
+    connector app.gui => gui.gui
+    connector app.timer => timer.timer
         
     instance deserializer : MessageDeserializer
     instance serializer : MessageSerializer
@@ -184,5 +198,5 @@ configuration JavaWeatherNode
     connector deserializer.RemoteControl => app.RemoteControlIn
     connector serializer.out => serial.IOStream
     connector serializer.RemoteControl => app.RemoteControlOut
-    connector app.gui => gui.gui
+    
 }
