@@ -20,13 +20,18 @@ thing SerialJava includes IOByteArray
         //DEBUG
         print("receiving from serial port...")
         
-        'System.out.print("[");
+        '
+        byte arr[] = new byte[' & byte & '.length];
+        System.out.print("[");
+        int i = 0;
         for(byte b :' & byte & ') {
             System.out.print("- " + b + " -");
+            arr[i] = b;
+            i++;
         }
         System.out.println("]");'
          
-        IOStream!receive_bytes(byte)
+        IOStream!receive_bytes('arr')
         
         print("")
     end
