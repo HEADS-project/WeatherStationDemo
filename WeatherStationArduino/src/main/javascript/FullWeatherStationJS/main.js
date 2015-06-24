@@ -1,0 +1,46 @@
+var MessageDeserializer = require('./MessageDeserializer');
+var TimerJS = require('./TimerJS');
+var MessageSerializer = require('./MessageSerializer');
+var WeatherStation = require('./WeatherStation');
+var SerialJS = require('./SerialJS');
+var FullWeatherStationJS_app = new WeatherStation();
+FullWeatherStationJS_app.setThis(FullWeatherStationJS_app);
+FullWeatherStationJS_app.build();
+var FullWeatherStationJS_serializer_buffer_array = [];
+var FullWeatherStationJS_serializer = new MessageSerializer(2, 8, 2, 16, 0x12, 0x13, 0x7D, 3, 4, 5, FullWeatherStationJS_serializer_buffer_array, 0);
+FullWeatherStationJS_serializer.setThis(FullWeatherStationJS_serializer);
+FullWeatherStationJS_serializer.build();
+var FullWeatherStationJS_deserializer_buffer_array = [];
+var FullWeatherStationJS_deserializer = new MessageDeserializer(2, 8, 2, 16, 0x12, 0x13, 0x7D, 3, 4, 5, FullWeatherStationJS_deserializer_buffer_array, 0);
+FullWeatherStationJS_deserializer.setThis(FullWeatherStationJS_deserializer);
+FullWeatherStationJS_deserializer.build();
+var FullWeatherStationJS_serial_buffer_array = [];
+var FullWeatherStationJS_serial = new SerialJS("COM27", require("serialport"), null, FullWeatherStationJS_serial_buffer_array, 0);
+FullWeatherStationJS_serial.setThis(FullWeatherStationJS_serial);
+FullWeatherStationJS_serial.build();
+var FullWeatherStationJS_timer = new TimerJS();
+FullWeatherStationJS_timer.setThis(FullWeatherStationJS_timer);
+FullWeatherStationJS_timer.build();
+FullWeatherStationJS_deserializer.getTemponRemoteControlListeners().push(FullWeatherStationJS_app.receivetempOnRemoteControlIn.bind(FullWeatherStationJS_app));
+FullWeatherStationJS_deserializer.getLuxonRemoteControlListeners().push(FullWeatherStationJS_app.receiveluxOnRemoteControlIn.bind(FullWeatherStationJS_app));
+FullWeatherStationJS_serializer.getWrite_bytesonoutListeners().push(FullWeatherStationJS_serial.receivewrite_bytesOnwrite.bind(FullWeatherStationJS_serial));
+FullWeatherStationJS_timer.getTimer_timeoutontimerListeners().push(FullWeatherStationJS_app.receivetimer_timeoutOntimer.bind(FullWeatherStationJS_app));
+FullWeatherStationJS_app.getTimer_startontimerListeners().push(FullWeatherStationJS_timer.receivetimer_startOntimer.bind(FullWeatherStationJS_timer));
+FullWeatherStationJS_app.getTimer_cancelontimerListeners().push(FullWeatherStationJS_timer.receivetimer_cancelOntimer.bind(FullWeatherStationJS_timer));
+FullWeatherStationJS_app.getChangeDisplayonRemoteControlOutListeners().push(FullWeatherStationJS_serializer.receivechangeDisplayOnRemoteControl.bind(FullWeatherStationJS_serializer));
+FullWeatherStationJS_serial.getReceive_bytesonreadListeners().push(FullWeatherStationJS_deserializer.receivereceive_bytesOnin.bind(FullWeatherStationJS_deserializer));
+FullWeatherStationJS_timer._init();
+FullWeatherStationJS_app._init();
+FullWeatherStationJS_deserializer._init();
+FullWeatherStationJS_serializer._init();
+FullWeatherStationJS_serial._init();
+//terminate all things on SIGINT (e.g. CTRL+C)
+process.on('SIGINT', function() {
+console.log("Stopping components... CTRL+D to force shutdown");
+FullWeatherStationJS_serializer._stop();
+FullWeatherStationJS_serial._stop();
+FullWeatherStationJS_timer._stop();
+FullWeatherStationJS_app._stop();
+FullWeatherStationJS_deserializer._stop();
+});
+

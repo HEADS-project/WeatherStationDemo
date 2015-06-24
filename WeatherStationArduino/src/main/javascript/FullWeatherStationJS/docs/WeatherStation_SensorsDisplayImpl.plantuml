@@ -1,0 +1,14 @@
+@startuml
+[*] --> SensorsDisplayImpl
+state SensorsDisplayImpl{
+state Process{
+	Process : entry / do\ntimer!timer_start(3000)\nend
+Process --> Process : timer_timeout?timer\ndo print (''Changing Display on Arduino'')\nRemoteControlOut!changeDisplay()\n
+	Process : internal temp?RemoteControlIn\ndo print (''Temperature is: '' + t.temp)\ngui!temp(t.temp)\n
+	Process : internal lux?RemoteControlIn\ndo print (''Light is: '' + l.lux)\ngui!lux(l.lux)\n
+	Process : internal changeDisplay?gui\ndo print (''Changing Display on Arduino'')\nRemoteControlOut!changeDisplay()\n
+}
+[*] --> Process
+	SensorsDisplayImpl : entry / do\nprint (''Weather station ready!'')\nend
+}
+@enduml

@@ -1,0 +1,12 @@
+@startuml
+[*] --> SerializerBehavior
+state SerializerBehavior{
+state Serialize{
+	Serialize : entry / print ("Coder ready indeed!")
+
+	Serialize : internal changeDisplay?RemoteControl\ndo print (''Serializing changeDisplay message'')\nsetHeader(200)\nsend()\n
+}
+[*] --> Serialize
+	SerializerBehavior : entry / do\nprint (''Coder ready!'')\nend
+}
+@enduml

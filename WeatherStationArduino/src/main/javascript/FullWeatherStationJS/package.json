@@ -1,0 +1,1 @@
+{"name":"FullWeatherStationJS","version":"1.0.0","description":"FullWeatherStationJS configuration generated from ThingML","main":"main.js","private":true,"dependencies":{"state.js":"^5.3.4","serialport":"1.7.4"},"devDependencies":{},"scripts":{}}

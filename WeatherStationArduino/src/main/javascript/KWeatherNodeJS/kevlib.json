@@ -1,0 +1,113 @@
+{
+    "class": "org.kevoree.ContainerRoot@0.75752546498551961435144220395",
+    "generated_KMF_ID": "0.75752546498551961435144220395",
+    "nodes": [],
+    "repositories": [],
+    "hubs": [],
+    "mBindings": [],
+    "groups": [],
+    "packages": [
+        {
+            "class": "org.kevoree.Package@my",
+            "name": "my",
+            "packages": [
+                {
+                    "class": "org.kevoree.Package@package",
+                    "name": "package",
+                    "packages": [],
+                    "typeDefinitions": [
+                        {
+                            "class": "org.kevoree.ComponentType@name=KWeatherNodeJS,version=1.0.0",
+                            "abstract": "false",
+                            "name": "KWeatherNodeJS",
+                            "version": "1.0.0",
+                            "deployUnits": [
+                                "packages[my]/packages[package]/deployUnits[hashcode=,name=KWeatherNodeJS,version=1.0.0]"
+                            ],
+                            "superTypes": [],
+                            "dictionaryType": [
+                                {
+                                    "class": "org.kevoree.DictionaryType@0.0498921617399901151435144220426",
+                                    "generated_KMF_ID": "0.0498921617399901151435144220426",
+                                    "attributes": []
+                                }
+                            ],
+                            "metaData": [],
+                            "required": [
+                                {
+                                    "class": "org.kevoree.PortTypeRef@KWe_Rem_changeDisplay_out",
+                                    "noDependency": "true",
+                                    "optional": "true",
+                                    "name": "KWe_Rem_changeDisplay_out",
+                                    "ref": [],
+                                    "mappings": []
+                                },
+                                {
+                                    "class": "org.kevoree.PortTypeRef@KWe_gui_lux_out",
+                                    "noDependency": "true",
+                                    "optional": "true",
+                                    "name": "KWe_gui_lux_out",
+                                    "ref": [],
+                                    "mappings": []
+                                },
+                                {
+                                    "class": "org.kevoree.PortTypeRef@KWe_gui_temp_out",
+                                    "noDependency": "true",
+                                    "optional": "true",
+                                    "name": "KWe_gui_temp_out",
+                                    "ref": [],
+                                    "mappings": []
+                                }
+                            ],
+                            "provided": [
+                                {
+                                    "class": "org.kevoree.PortTypeRef@KWe_gui_changeDisplay_in",
+                                    "noDependency": "true",
+                                    "optional": "true",
+                                    "name": "KWe_gui_changeDisplay_in",
+                                    "ref": [],
+                                    "mappings": []
+                                },
+                                {
+                                    "class": "org.kevoree.PortTypeRef@KWe_Rem_lux_in",
+                                    "noDependency": "true",
+                                    "optional": "true",
+                                    "name": "KWe_Rem_lux_in",
+                                    "ref": [],
+                                    "mappings": []
+                                },
+                                {
+                                    "class": "org.kevoree.PortTypeRef@KWe_Rem_temp_in",
+                                    "noDependency": "true",
+                                    "optional": "true",
+                                    "name": "KWe_Rem_temp_in",
+                                    "ref": [],
+                                    "mappings": []
+                                }
+                            ]
+                        }
+                    ],
+                    "deployUnits": [
+                        {
+                            "class": "org.kevoree.DeployUnit@hashcode=,name=KWeatherNodeJS,version=1.0.0",
+                            "name": "KWeatherNodeJS",
+                            "hashcode": "",
+                            "url": "",
+                            "version": "1.0.0",
+                            "requiredLibs": [],
+                            "filters": [
+                                {
+                                    "class": "org.kevoree.Value@platform",
+                                    "name": "platform",
+                                    "value": "javascript"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "typeDefinitions": [],
+            "deployUnits": []
+        }
+    ]
+}

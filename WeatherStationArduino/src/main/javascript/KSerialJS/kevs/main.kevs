@@ -1,0 +1,13 @@
+//create a default JavaScript node
+add node0 : JavascriptNode
+//create a default group to manage the node(s)
+add sync : WSGroup
+set sync.port/node0 = "9000"
+attach node0 sync
+
+//instantiate Kevoree/ThingML components
+add node0.KSerialJS_0 : my.package.KSerialJS
+start sync
+//start node0
+
+

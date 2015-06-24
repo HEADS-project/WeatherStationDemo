@@ -1,0 +1,17 @@
+@startuml
+node "FullWeatherStationJS"{
+read_FullWeatherStationJS_serial - [FullWeatherStationJS_serial]
+write_FullWeatherStationJS_serial - [FullWeatherStationJS_serial]
+IOStream_FullWeatherStationJS_serial - [FullWeatherStationJS_serial]
+[FullWeatherStationJS_deserializer]
+[FullWeatherStationJS_serializer]
+RemoteControlIn_FullWeatherStationJS_app - [FullWeatherStationJS_app]
+RemoteControlOut_FullWeatherStationJS_app - [FullWeatherStationJS_app]
+timer_FullWeatherStationJS_timer - [FullWeatherStationJS_timer]
+[FullWeatherStationJS_serializer] -> write_FullWeatherStationJS_serial : out
+[FullWeatherStationJS_app] -> timer_FullWeatherStationJS_timer : timer
+[FullWeatherStationJS_deserializer] -> read_FullWeatherStationJS_serial : in
+[FullWeatherStationJS_deserializer] -> RemoteControlIn_FullWeatherStationJS_app : RemoteControl
+[FullWeatherStationJS_serializer] -> RemoteControlOut_FullWeatherStationJS_app : RemoteControl
+}
+@enduml

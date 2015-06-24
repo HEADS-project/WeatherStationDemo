@@ -1,0 +1,11 @@
+@startuml
+[*] --> receive
+state receive{
+state Idle{
+	Idle : entry / do\nprint (''Decoder ready indeed!'')\nend
+	Idle : internal receive_bytes?in\ndo print (''byte[] received from serial. Will try to decode it!... '' + m.b)\nreceive(m.b)\n
+}
+[*] --> Idle
+	receive : entry / do\nprint (''Decoder ready!'')\nend
+}
+@enduml

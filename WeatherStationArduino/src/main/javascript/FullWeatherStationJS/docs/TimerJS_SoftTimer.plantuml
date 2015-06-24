@@ -1,0 +1,10 @@
+@startuml
+[*] --> SoftTimer
+state SoftTimer{
+state default{
+	default : internal timer_start?timer\nif m.delay > 0\ndo start(m.delay)\n
+	default : internal timer_cancel?timer\ndo cancel()\n
+}
+[*] --> default
+}
+@enduml

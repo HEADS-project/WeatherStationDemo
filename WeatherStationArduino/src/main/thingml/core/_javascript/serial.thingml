@@ -5,10 +5,8 @@ import "../comm.thingml"
 datatype serial;
 datatype SerialPort;
 
-//IMPORTANT: please install serialport beforehand:
-//          npm install serialport
-
-thing SerialJS includes IOByteArray
+thing SerialJS includes InputByteArrayMsgs, OutputByteArrayMsgs
+@js_dep "serialport:1.7.4"
 @pim "IOStream"
 @platform "javascript"
 @javascript "node"
@@ -34,15 +32,15 @@ thing SerialJS includes IOByteArray
 	function receive(byte : Byte)
     @private "true"
     do
-        //print("receiving " + byte + " from serial port...")
         if (buffer[0] == '0x13' and byte == '0x12' or buffer[0] == '0x12') do//if new buffer or start byte already there
             if (not(byte == '0x13') or buffer[index-1] == '0x7D') do //if not stop byte (or if it is escaped)
+                //print("receiving " + byte + " from serial port...")
                 buffer[index] = byte
                 index = index + 1
             end 
             if (byte == '0x13' and not(buffer[index-1] == '0x7D')) do //stop byte
                //print("forward buffer! [" + buffer + "]")
-               read!receive_bytes(buffer)
+               read!receive_bytes('' & buffer & '.slice()')
                //print("buffer forwarded!")
                index = 0
                var i : Integer = 0
@@ -66,22 +64,30 @@ thing SerialJS includes IOByteArray
         //initialize and open serial port
         serialP = 'new ' & lib & '.SerialPort(' & serialPort & ', {baudrate: 9600,   parser: ' & lib & '.parsers.byteLength(1)}, false);'
         '' & serialP & '.open(function (error) {'
-        'if (error)'
+        'if (error){'
         error("Problem opening the serial port... It might work, though most likely not :-)")
-        'else'     
+        'console.log(error);'
+        error("Available serial ports:")
+        '' & lib & '.list(function (err, ports) {
+            ports.forEach(function(port) {
+                console.log(port.comName);                
+            });
+        });'
+        '}else{'     
         '' & serialP & '.on(\'data\', function(data) {'
                 //print('data')
                 receive('data[0]')
             '});'  
-        print("Serial port opened sucessfully!")
-        '})'
+            print("Serial port opened sucessfully!")            
+        '}})'
     end
     
     function killSerial() do
         '' & serialP & '.close(function (error) {' 
-        'if (error)'
+        'if (error){'
         error("Problem closing the serial port...")
-        'else'       
+        'console.log(error);'
+        '}else'       
         print("serial port closed!") 
         '});'
     end
@@ -127,9 +133,9 @@ thing SerialClient includes InputByteArrayMsgs, OutputByteArrayMsgs
     }
 }
 
-configuration TestSerialJS {
+/*configuration TestSerialJS {
     instance serial : SerialJS
     instance client : SerialClient
     
     connector client.IOStream => serial.IOStream
-}
+}*/

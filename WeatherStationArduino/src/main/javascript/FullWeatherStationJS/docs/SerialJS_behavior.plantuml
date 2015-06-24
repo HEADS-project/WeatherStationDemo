@@ -1,0 +1,11 @@
+@startuml
+[*] --> behavior
+state behavior{
+state default{
+	default : internal write_bytes?write\ndo '' & serialP & '.write(' & wb.b & ', function(err, results) {'\n'});'\n
+}
+[*] --> default
+	behavior : entry / do\ninitSerial()\nprint (''Serial port ready!'')\nend
+	behavior : Exit / ExitActions() = do\nkillSerial()\nprint (''Serial port killed, RIP!'')\nend
+}
+@enduml

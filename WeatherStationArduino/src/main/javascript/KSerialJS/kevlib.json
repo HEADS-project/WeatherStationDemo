@@ -1,0 +1,97 @@
+{
+    "class": "org.kevoree.ContainerRoot@0.460764645831659441435144205611",
+    "generated_KMF_ID": "0.460764645831659441435144205611",
+    "nodes": [],
+    "repositories": [],
+    "hubs": [],
+    "mBindings": [],
+    "groups": [],
+    "packages": [
+        {
+            "class": "org.kevoree.Package@my",
+            "name": "my",
+            "packages": [
+                {
+                    "class": "org.kevoree.Package@package",
+                    "name": "package",
+                    "packages": [],
+                    "typeDefinitions": [
+                        {
+                            "class": "org.kevoree.ComponentType@name=KSerialJS,version=1.0.0",
+                            "abstract": "false",
+                            "name": "KSerialJS",
+                            "version": "1.0.0",
+                            "deployUnits": [
+                                "packages[my]/packages[package]/deployUnits[hashcode=,name=KSerialJS,version=1.0.0]"
+                            ],
+                            "superTypes": [],
+                            "dictionaryType": [
+                                {
+                                    "class": "org.kevoree.DictionaryType@0.60086287558078771435144205741",
+                                    "generated_KMF_ID": "0.60086287558078771435144205741",
+                                    "attributes": []
+                                }
+                            ],
+                            "metaData": [],
+                            "required": [
+                                {
+                                    "class": "org.kevoree.PortTypeRef@KSe_out_write_bytes_out",
+                                    "noDependency": "true",
+                                    "optional": "true",
+                                    "name": "KSe_out_write_bytes_out",
+                                    "ref": [],
+                                    "mappings": []
+                                },
+                                {
+                                    "class": "org.kevoree.PortTypeRef@KSe_Rem_lux_out",
+                                    "noDependency": "true",
+                                    "optional": "true",
+                                    "name": "KSe_Rem_lux_out",
+                                    "ref": [],
+                                    "mappings": []
+                                },
+                                {
+                                    "class": "org.kevoree.PortTypeRef@KSe_Rem_temp_out",
+                                    "noDependency": "true",
+                                    "optional": "true",
+                                    "name": "KSe_Rem_temp_out",
+                                    "ref": [],
+                                    "mappings": []
+                                }
+                            ],
+                            "provided": [
+                                {
+                                    "class": "org.kevoree.PortTypeRef@KSe_Rem_changeDisplay_in",
+                                    "noDependency": "true",
+                                    "optional": "true",
+                                    "name": "KSe_Rem_changeDisplay_in",
+                                    "ref": [],
+                                    "mappings": []
+                                }
+                            ]
+                        }
+                    ],
+                    "deployUnits": [
+                        {
+                            "class": "org.kevoree.DeployUnit@hashcode=,name=KSerialJS,version=1.0.0",
+                            "name": "KSerialJS",
+                            "hashcode": "",
+                            "url": "",
+                            "version": "1.0.0",
+                            "requiredLibs": [],
+                            "filters": [
+                                {
+                                    "class": "org.kevoree.Value@platform",
+                                    "name": "platform",
+                                    "value": "javascript"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "typeDefinitions": [],
+            "deployUnits": []
+        }
+    ]
+}
